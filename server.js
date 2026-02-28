@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 const compression = require('compression');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
@@ -12,6 +13,24 @@ const PORT = process.env.PORT || 4000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+// Email Transporter Configuration
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+// Verify transporter on startup
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('Email Transporter Error:', error);
+    } else {
+        console.log('Email Transporter is ready');
+    }
+});
 
 // Debugging - Log all requests
 app.use((req, res, next) => {
@@ -40,7 +59,7 @@ app.get('/', (req, res) => {
 });
 
 // API Routes
-app.post('/api/commissions', (req, res) => {
+app.post('/api/commissions', async (req, res) => {
     const { name, email, phone, type, description } = req.body;
     console.log('--- NEW COMMISSION INQUIRY ---');
     console.log(`Name: ${name}`);
@@ -49,6 +68,31 @@ app.post('/api/commissions', (req, res) => {
     console.log(`Type: ${type}`);
     console.log(`Description: ${description}`);
     console.log('------------------------------');
+
+    // Send Email
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: process.env.RECEIVER_EMAIL,
+        subject: `New Commission Inquiry from ${name}`,
+        text: `
+--- NEW COMMISSION INQUIRY ---
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Type: ${type}
+Description: ${description}
+------------------------------
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // We still return success to the user so they don't see an error, 
+        // but we log it on our end.
+    }
 
     res.status(200).json({
         success: true,
