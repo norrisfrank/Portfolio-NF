@@ -31,6 +31,11 @@ if (!fs.existsSync(publicPath)) {
 
 app.use(express.static(publicPath));
 
+// Explicit root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
+});
+
 // API Routes
 app.post('/api/commissions', (req, res) => {
     const { name, email, phone, type, description } = req.body;
