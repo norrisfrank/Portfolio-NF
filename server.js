@@ -49,7 +49,13 @@ app.post('/api/payments', (req, res) => {
 
 // Serve frontend - Catch-all middleware
 app.use((req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    const indexPath = path.join(__dirname, 'public', 'index.html');
+    res.sendFile(indexPath, (err) => {
+        if (err) {
+            console.error('Error sending index.html:', err);
+            res.status(500).send('Final fallback: index.html not found. Check public folder.');
+        }
+    });
 });
 
 app.listen(PORT, () => {
