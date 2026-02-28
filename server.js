@@ -10,7 +10,26 @@ const PORT = process.env.PORT || 4000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Debugging - Log all requests
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
+// Health check
+app.get('/health', (req, res) => res.status(200).send('Server is UP'));
+
+// Check for public folder on startup
+const publicPath = path.join(__dirname, 'public');
+const fs = require('fs');
+if (!fs.existsSync(publicPath)) {
+    console.error('CRITICAL: public folder not found at', publicPath);
+} else {
+    console.log('Serving static files from', publicPath);
+}
+
+app.use(express.static(publicPath));
 
 // API Routes
 app.post('/api/commissions', (req, res) => {
