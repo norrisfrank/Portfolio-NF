@@ -27,6 +27,7 @@ if (!fs.existsSync(publicPath)) {
     console.error('CRITICAL: public folder not found at', publicPath);
 } else {
     console.log('Serving static files from', publicPath);
+    console.log('Files in public folder:', fs.readdirSync(publicPath));
 }
 
 app.use(express.static(publicPath));
@@ -82,6 +83,6 @@ app.use((req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
 });
