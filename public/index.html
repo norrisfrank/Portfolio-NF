@@ -3547,7 +3547,7 @@
                         <div class="pcard-inner ${innerClass} hire-proj" style="${p.type === 'osint' || p.type === 'finance' ? `background:${accentHex};` : ''}">
                             <div class="art-img-container">
                                 <div class="art-img" style="aspect-ratio:1.6/1; background:#eee; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                                    ${screenshotSrc ? `<img src="${screenshotSrc}" alt="${p.title}" style="width:100%; height:100%; object-fit:cover; display:block;">` : `<span class="icon-float" style="font-size:24px;">📁</span>`}
+                                    ${screenshotSrc ? `<img src="${screenshotSrc}" alt="${p.title}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">` : `<span class="icon-float" style="font-size:24px;">📁</span>`}
                                 </div>
                             </div>
                             <div class="proj-label">${(p.type || 'PROJECT').toUpperCase()}</div>
@@ -3596,7 +3596,7 @@
                             <div class="art-img-container" style="background:#fff; border:4px solid #000; padding:6px; margin-bottom:12px; position:relative;">
                                 <div class="art-num" style="position:absolute; top:8px; left:8px; font-family:'Press Start 2P', monospace; font-size:7px; color:#000; background: #fff; padding: 2px; border:2px solid #000;">#${p.num}</div>
                                 <div class="art-img" style="aspect-ratio: 1/1; overflow:hidden; background:#eee; display:flex; align-items:center; justify-content:center;">
-                                    ${p.img ? `<img src="${encodeURI(resolveAsset(p.img))}" alt="${p.title}" style="width:100%; height:100%; object-fit:cover;">` : `<div class="art-img-placeholder">COMING SOON</div>`}
+                                    ${p.img ? `<img src="${encodeURI(resolveAsset(p.img))}" alt="${p.title}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<div class="art-img-placeholder">COMING SOON</div>`}
                                 </div>
                             </div>
                             <div class="art-title" style="font-family:'Press Start 2P', monospace; font-size:9px; color:#000; margin-bottom:8px; font-weight:bold;">${p.title}</div>
@@ -3760,6 +3760,7 @@
                     const image = document.createElement('img');
                     image.src = src;
                     image.alt = p.title || 'Artwork';
+                    image.loading = 'lazy';
                     imgBox.appendChild(image);
                 } else {
                     imgBox.textContent = 'COMING SOON';
