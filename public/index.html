@@ -1,0 +1,4224 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<div class="bg-icons" id="bg-icons"></div>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Norris Frank â€” Backend Engineer
+    </title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --orange: #e8600a;
+            --blue-light: #4a8fd5;
+            --green-light: #3aaa62;
+            --white: #f0ede6;
+            --gray: #888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 40px;
+            background: var(--black);
+            border-bottom: 4px solid #222;
+        }
+
+        .nav-logo {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            color: var(--orange);
+        }
+
+        .nav-logo span {
+            color: var(--white);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: var(--gray);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+        }
+
+        .nav-cta {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            padding: 12px 18px;
+            background: var(--orange);
+            color: #000;
+            border: 4px solid #000;
+            box-shadow: 4px 4px 0 #000;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .nav-cta:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        /* VIEWS */
+        #main-view {
+            display: block;
+        }
+
+        #art-view,
+        #hire-view {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            position: relative;
+        }
+
+        #art-view.active,
+        #hire-view.active {
+            display: block;
+            opacity: 1;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            background: #f4f4f4;
+            color: #111;
+            padding: 100px 40px 80px;
+            animation: fadeIn 0.35s ease forwards;
+        }
+
+        #art-view.active::before,
+        #hire-view.active::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(rgba(160, 160, 160, 0.08) 1px, transparent 1px),
+                radial-gradient(rgba(160, 160, 160, 0.06) 1px, transparent 1px);
+            background-size: 22px 22px, 22px 22px;
+            background-position: 0 0, 11px 11px;
+            opacity: 1;
+            pointer-events: none;
+            z-index: 0;
+            image-rendering: pixelated;
+        }
+
+        #art-view .container,
+        #hire-view .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        /* BACKGROUND ICONS */
+        .bg-icons {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .view-bg-icons {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-icon {
+            position: absolute;
+            font-size: 18px;
+            color: #a6a6a6;
+            opacity: 0.12;
+            filter: none;
+            animation: wave-float 18s ease-in-out infinite;
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        .view-bg-icon {
+            position: absolute;
+            font-size: 16px;
+            color: #9fa1a3;
+            opacity: 0.12;
+            animation: wave-float 22s ease-in-out infinite;
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        @keyframes wave-float {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(70vh) translateX(2vw) rotate(90deg);
+            }
+
+            50% {
+                transform: translateY(40vh) translateX(-2vw) rotate(180deg);
+            }
+
+            75% {
+                transform: translateY(10vh) translateX(1vw) rotate(270deg);
+            }
+
+            100% {
+                transform: translateY(-10vh) translateX(0) rotate(360deg);
+            }
+        }
+
+        /* GRAINY NOISE GLOBAL EXTENSION */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 1;
+            background-image:
+                radial-gradient(rgba(180, 180, 180, 0.08) 1px, transparent 1px),
+                radial-gradient(rgba(180, 180, 180, 0.06) 1px, transparent 1px);
+            background-size: 22px 22px, 22px 22px;
+            background-position: 0 0, 11px 11px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(220px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .pcard-wrap {
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            padding-bottom: 12px;
+            padding-right: 12px;
+            z-index: 5;
+            /* Above background */
+        }
+
+        .pcard-wrap:hover {
+            transform: scale(1.02) translateY(-10px) rotate(-1deg);
+        }
+
+        @keyframes priceFloat {
+            0% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-6px)
+            }
+
+            100% {
+                transform: translateY(0)
+            }
+        }
+
+        .pcard-wrap.price-float {
+            animation: priceFloat 5s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-4px)
+            }
+
+            100% {
+                transform: translateY(0)
+            }
+        }
+
+        .icon-float {
+            display: inline-block;
+            animation: iconFloat 4.5s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        /* Card wave animation for skills/problems */
+        @keyframes cardWave {
+            0% {
+                transform: translateY(0) rotate(0.25deg)
+            }
+
+            25% {
+                transform: translateY(-8px) rotate(-0.35deg)
+            }
+
+            50% {
+                transform: translateY(0) rotate(0.25deg)
+            }
+
+            75% {
+                transform: translateY(6px) rotate(0deg)
+            }
+
+            100% {
+                transform: translateY(0) rotate(0.25deg)
+            }
+        }
+
+        #skills-structured .pcard-outer,
+        #problems .pcard-wrap {
+            animation: cardWave 6s ease-in-out infinite;
+        }
+
+        #projects .pcard-wrap,
+        .approach-card,
+        .art-card-wrap,
+        #hire-projects-grid .pcard-wrap,
+        .pricing-grid .pcard-wrap {
+            animation: cardWave 6.5s ease-in-out infinite;
+        }
+
+        #skills-structured .pcard-outer:nth-child(2n),
+        #problems .pcard-wrap:nth-child(2n) {
+            animation-delay: 0.4s;
+        }
+
+        #skills-structured .pcard-outer:nth-child(3n),
+        #problems .pcard-wrap:nth-child(3n) {
+            animation-delay: 0.8s;
+        }
+
+        #skills-structured .pcard-outer:nth-child(4n),
+        #problems .pcard-wrap:nth-child(4n) {
+            animation-delay: 1.2s;
+        }
+
+        /* Semi-bold body text inside cards, bold headings */
+        #skills-structured .proj-label,
+        #skills-structured .proj-name,
+        #problems .art-title {
+            font-weight: bold;
+        }
+
+        #skills-structured .pcard-inner ul,
+        #skills-structured .pcard-inner li,
+        #skills-structured .pcard-inner div:not(.proj-label):not(.proj-name),
+        #problems .pcard-inner div:not(.art-title),
+        #problems .pcard-inner li {
+            font-weight: 600;
+        }
+
+        /* The solid black shadow behind the card */
+        .pcard-wrap::after {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            inset: 8px -4px -4px 8px;
+            /* Offset for chunkier shadow */
+            background: #000;
+            clip-path: polygon(0 24px, 4px 24px, 4px 16px, 8px 16px, 8px 12px, 12px 12px, 12px 8px, 16px 8px, 16px 4px, 24px 4px, 24px 0,
+                    calc(100% - 24px) 0, calc(100% - 24px) 4px, calc(100% - 16px) 4px, calc(100% - 16px) 8px, calc(100% - 12px) 8px, calc(100% - 12px) 12px, calc(100% - 8px) 12px, calc(100% - 8px) 16px, calc(100% - 4px) 16px, calc(100% - 4px) 24px, 100% 24px,
+                    100% calc(100% - 24px), calc(100% - 4px) calc(100% - 24px), calc(100% - 4px) calc(100% - 16px), calc(100% - 8px) calc(100% - 16px), calc(100% - 8px) calc(100% - 12px), calc(100% - 12px) calc(100% - 12px), calc(100% - 12px) calc(100% - 8px), calc(100% - 16px) calc(100% - 8px), calc(100% - 16px) calc(100% - 4px), calc(100% - 24px) calc(100% - 4px), calc(100% - 24px) 100%,
+                    24px 100%, 24px calc(100% - 4px), 16px calc(100% - 4px), 16px calc(100% - 8px), 12px calc(100% - 8px), 12px calc(100% - 12px), 8px calc(100% - 12px), 8px calc(100% - 16px), 4px calc(100% - 16px), 4px calc(100% - 24px), 0 calc(100% - 24px));
+        }
+
+        .pcard-outer {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            background: #222;
+            /* Thick black border base */
+            padding: 8px;
+            /* thicker border */
+            clip-path: polygon(0 24px, 4px 24px, 4px 16px, 8px 16px, 8px 12px, 12px 12px, 12px 8px, 16px 8px, 16px 4px, 24px 4px, 24px 0,
+                    calc(100% - 24px) 0, calc(100% - 24px) 4px, calc(100% - 16px) 4px, calc(100% - 16px) 8px, calc(100% - 12px) 8px, calc(100% - 12px) 12px, calc(100% - 8px) 12px, calc(100% - 8px) 16px, calc(100% - 4px) 16px, calc(100% - 4px) 24px, 100% 24px,
+                    100% calc(100% - 24px), calc(100% - 4px) calc(100% - 24px), calc(100% - 4px) calc(100% - 16px), calc(100% - 8px) calc(100% - 16px), calc(100% - 8px) calc(100% - 12px), calc(100% - 12px) calc(100% - 12px), calc(100% - 12px) calc(100% - 8px), calc(100% - 16px) calc(100% - 8px), calc(100% - 16px) calc(100% - 4px), calc(100% - 24px) calc(100% - 4px), calc(100% - 24px) 100%,
+                    24px 100%, 24px calc(100% - 4px), 16px calc(100% - 4px), 16px calc(100% - 8px), 12px calc(100% - 8px), 12px calc(100% - 12px), 8px calc(100% - 12px), 8px calc(100% - 16px), 4px calc(100% - 16px), 4px calc(100% - 24px), 0 calc(100% - 24px));
+        }
+
+        .pcard-inner {
+            background: #fff;
+            color: #000;
+            padding: 32px 24px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Center content like screenshot */
+            text-align: center;
+            clip-path: polygon(0 18px, 4px 18px, 4px 12px, 8px 12px, 8px 8px, 12px 8px, 12px 4px, 18px 4px, 18px 0,
+                    calc(100% - 18px) 0, calc(100% - 18px) 4px, calc(100% - 12px) 4px, calc(100% - 12px) 8px, calc(100% - 8px) 8px, calc(100% - 8px) 12px, calc(100% - 4px) 12px, calc(100% - 4px) 18px, 100% 18px,
+                    100% calc(100% - 18px), calc(100% - 4px) calc(100% - 18px), calc(100% - 4px) calc(100% - 12px), calc(100% - 8px) calc(100% - 12px), calc(100% - 8px) calc(100% - 8px), calc(100% - 12px) calc(100% - 8px), calc(100% - 12px) calc(100% - 4px), calc(100% - 18px) calc(100% - 4px), calc(100% - 18px) 100%,
+                    18px 100%, 18px calc(100% - 4px), 12px calc(100% - 4px), 12px calc(100% - 8px), 8px calc(100% - 8px), 8px calc(100% - 12px), 4px calc(100% - 12px), 4px calc(100% - 18px), 0 calc(100% - 18px));
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .pcard-inner.flip {
+            transform: rotateY(180deg);
+        }
+
+        /* Color Themes for pcard-outer (Border Color in Screenshot 1391) */
+        .c-orange-br {
+            background: #ffb366;
+        }
+
+        .c-blue-br {
+            background: #8ecae6;
+        }
+
+        .c-green-br {
+            background: #86efac;
+        }
+
+        .c-white-br {
+            background: #ffffff;
+        }
+
+        .c-red-br {
+            background: #fca5a5;
+        }
+
+        .c-purple-br {
+            background: #d8b4fe;
+        }
+
+        .c-grey-br {
+            background: #4a4a4a;
+        }
+
+        .pcard-inner.c-orange {
+            background: #ffb366;
+        }
+
+        .pcard-inner.c-blue {
+            background: #8ecae6;
+        }
+
+        .pcard-inner.c-green {
+            background: #86efac;
+        }
+
+        .pcard-inner.c-white {
+            background: #ffffff;
+        }
+
+        .pcard-inner.c-red {
+            background: #fca5a5;
+        }
+
+        .pcard-inner.c-purple {
+            background: #d8b4fe;
+        }
+
+        .price-inner:hover {
+            filter: none !important;
+        }
+
+        /* HERO */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 120px 40px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(232, 96, 10, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(232, 96, 10, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .hero-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-eyebrow {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            color: var(--orange);
+            letter-spacing: 3px;
+            margin-bottom: 22px;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .hero-name {
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(26px, 5vw, 54px);
+            line-height: 1.4;
+            margin-bottom: 16px;
+            animation: fadeUp 0.6s ease 0.1s both;
+        }
+
+        .hero-name span {
+            color: var(--orange);
+        }
+
+        .hero-subtitle {
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(9px, 1.8vw, 14px);
+            color: var(--gray);
+            margin-bottom: 28px;
+            min-height: 28px;
+            animation: fadeUp 0.6s ease 0.2s both;
+        }
+
+        .hero-tagline {
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.9;
+            max-width: 540px;
+            margin-bottom: 44px;
+            animation: fadeUp 0.6s ease 0.3s both;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeUp 0.6s ease 0.4s both;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 12px;
+            height: 16px;
+            background: var(--orange);
+            margin-left: 3px;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* BOT */
+        .bot-container {
+            position: absolute;
+            right: 7%;
+            bottom: 8%;
+            z-index: 5;
+            animation: levitate 2.8s ease-in-out infinite;
+        }
+
+        .bot-body {
+            width: 96px;
+            height: 86px;
+            background: #c8c8c8;
+            border: 6px solid #000;
+            box-shadow: 6px 6px 0 #000;
+            position: relative;
+        }
+
+        .bot-body::before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 12px;
+            width: 14px;
+            height: 14px;
+            background: #000;
+            box-shadow: 40px 0 0 #000;
+            animation: blinkEyes 4s step-end infinite;
+        }
+
+        .bot-body::after {
+            content: '';
+            position: absolute;
+            bottom: 14px;
+            left: 18px;
+            width: 52px;
+            height: 6px;
+            background: var(--orange);
+            border: 3px solid #000;
+        }
+
+        .bot-head {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 13px;
+            background: #aaa;
+            border: 4px solid #000;
+        }
+
+        .bot-arm-l {
+            position: absolute;
+            left: -27px;
+            top: 26px;
+            width: 23px;
+            height: 11px;
+            background: #aaa;
+            border: 4px solid #000;
+            transform-origin: right center;
+            animation: wave 2s ease-in-out infinite;
+        }
+
+        .bot-arm-r {
+            position: absolute;
+            right: -27px;
+            top: 26px;
+            width: 23px;
+            height: 11px;
+            background: #aaa;
+            border: 4px solid #000;
+        }
+
+        .bot-legs {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+        }
+
+        .bot-leg {
+            width: 18px;
+            height: 26px;
+            background: #aaa;
+            border: 4px solid #000;
+            border-top: none;
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: rotate(0deg)
+            }
+
+            50% {
+                transform: rotate(-35deg)
+            }
+        }
+
+        @keyframes blinkEyes {
+
+            0%,
+            90%,
+            100% {
+                height: 14px;
+                margin-top: 0
+            }
+
+            95% {
+                height: 2px;
+                margin-top: 6px
+            }
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: var(--gray);
+            letter-spacing: 2px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.35
+            }
+
+            50% {
+                opacity: 1
+            }
+        }
+
+        /* BUTTONS */
+        .btn-primary {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            padding: 13px 22px;
+            background: var(--orange);
+            color: #000;
+            border: 4px solid #000;
+            box-shadow: 6px 6px 0 #000;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .btn-primary:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0 #000;
+        }
+
+        .btn-secondary {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            padding: 13px 22px;
+            background: transparent;
+            color: var(--white);
+            border: 4px solid var(--white);
+            box-shadow: 6px 6px 0 #000;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.1s, box-shadow 0.1s, background 0.2s, color 0.2s;
+        }
+
+        .btn-secondary:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0 #000;
+            background: var(--white);
+            color: #000;
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 96px 40px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(15px, 2.4vw, 24px);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .section-sub {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 52px;
+            line-height: 1.9;
+        }
+
+        /* ABOUT */
+        #about {
+            background: #0e0e0e;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 56px;
+            align-items: start;
+            margin-bottom: 56px;
+        }
+
+        .about-visual {
+            background: #1a1a1a;
+            border: 4px solid var(--orange);
+            box-shadow: 8px 8px 0 #000;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+
+        .about-text p {
+            font-size: 12px;
+            line-height: 2;
+            color: #ccc;
+            margin-bottom: 16px;
+        }
+
+        .approach-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .approach-card {
+            background: #111;
+            border: 4px solid var(--white);
+            box-shadow: 6px 6px 0 #000;
+            padding: 26px 20px;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .approach-card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 9px 9px 0 #000;
+        }
+
+        .approach-icon {
+            font-size: 20px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .approach-card h3 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            margin-bottom: 10px;
+            color: var(--orange);
+            line-height: 1.7;
+        }
+
+        .approach-card p {
+            font-size: 11px;
+            color: #aaa;
+            line-height: 1.9;
+        }
+
+        /* PROJECTS */
+        #projects {
+            background: var(--black);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 36px;
+        }
+
+        /* project card inner styles */
+        .proj-inner {
+            align-items: flex-start !important;
+        }
+
+        .proj-label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .proj-name {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            color: #000;
+        }
+
+        .proj-desc {
+            font-size: 12px;
+            line-height: 1.9;
+            margin-bottom: 14px;
+            color: #000;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 18px;
+        }
+
+        .badge {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            padding: 5px 7px;
+            border: 2px solid rgba(0, 0, 0, 0.25);
+            color: rgba(0, 0, 0, 0.55);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .proj-link {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: #000;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: auto;
+            transition: gap 0.2s;
+        }
+
+        .proj-link:hover {
+            gap: 12px;
+        }
+
+        /* PRICING FLIP (Phase 3) */
+        .price-card-container {
+            perspective: 1000px;
+            height: 520px;
+        }
+
+        .price-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .price-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .price-front,
+        .price-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 20px;
+        }
+
+        .price-back {
+            transform: rotateY(180deg);
+            background: #fff;
+            color: #000;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            border: 4px solid #000;
+            box-shadow: 12px 12px 0 #000;
+        }
+
+        /* LIVE CARD MOCKUP */
+        .live-card {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            border-radius: 15px;
+            padding: 20px;
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .live-card-chip {
+            width: 35px;
+            height: 25px;
+            background: #ffd700;
+            border-radius: 4px;
+        }
+
+        .live-card-num {
+            font-size: 16px;
+            letter-spacing: 2px;
+        }
+
+        .live-card-name {
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .live-card-val {
+            font-size: 10px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .pay-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pay-tab {
+            flex: 1;
+            padding: 8px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            border: 3px solid #000;
+            background: #eee;
+            cursor: pointer;
+        }
+
+        .pay-tab.active {
+            background: #000;
+            color: #fff;
+        }
+
+        .coupon-wrap {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .coupon-input {
+            background: #fff;
+            border: 3px solid #000;
+            padding: 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-align: center;
+            width: 200px;
+            outline: none;
+        }
+
+        .coupon-btn {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            background: #000;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .coupon-msg {
+            font-size: 9px;
+            font-family: 'Press Start 2P', monospace;
+            margin-top: 10px;
+            height: 12px;
+        }
+
+        /* STACK */
+        #stack {
+            background: var(--black);
+        }
+
+        .stack-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .stack-card {
+            background: #111;
+            border: 4px solid #2a2a2a;
+            box-shadow: 6px 6px 0 #000;
+            padding: 22px 18px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stack-card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 9px 9px 0 #000;
+            border-color: var(--orange);
+        }
+
+        .stack-card:hover .stack-tip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stack-icon {
+            font-size: 18px;
+            width: 40px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .stack-name {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            color: var(--white);
+        }
+
+        .stack-tip {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--orange);
+            color: #000;
+            font-size: 9px;
+            padding: 8px 12px;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.2s, transform 0.2s;
+            line-height: 1.7;
+        }
+
+        /* TIMELINE */
+        #timeline {
+            background: #0e0e0e;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: repeating-linear-gradient(to bottom, var(--orange) 0, var(--orange) 12px, transparent 12px, transparent 20px);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 38px;
+            padding: 22px;
+            background: #111;
+            border: 4px solid #2a2a2a;
+            box-shadow: 6px 6px 0 #000;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(4px);
+            box-shadow: 2px 6px 0 #000;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 22px;
+            width: 14px;
+            height: 14px;
+            background: var(--orange);
+            border: 4px solid #000;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .tl-year {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            color: var(--orange);
+            margin-bottom: 7px;
+        }
+
+        .tl-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 11px;
+            color: var(--white);
+            margin-bottom: 7px;
+            line-height: 1.7;
+        }
+
+        .tl-desc {
+            font-size: 11px;
+            color: #888;
+            line-height: 1.9;
+        }
+
+        /* CONTACT */
+        #contact {
+            background: var(--black);
+            text-align: center;
+        }
+
+        .contact-inner {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-tag {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            color: var(--orange);
+            letter-spacing: 3px;
+            margin-bottom: 18px;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            padding: 13px 18px;
+            text-decoration: none;
+            border: 4px solid #333;
+            color: var(--gray);
+            box-shadow: 5px 5px 0 #000;
+            transition: transform 0.1s, box-shadow 0.1s, border-color 0.2s, color 0.2s;
+        }
+
+        .contact-link:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 #000;
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 4px solid #1a1a1a;
+            padding: 26px 40px;
+            text-align: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: #333;
+            letter-spacing: 2px;
+        }
+
+        footer span {
+            color: var(--orange);
+        }
+
+        /* SCROLL REVEAL */
+        .reveal {
+            opacity: 0;
+            transform: translateY(26px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* VIEW HEADER */
+        .view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 44px;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .back-btn {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            padding: 11px 17px;
+            background: #000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #444;
+            transition: transform 0.1s, box-shadow 0.1s;
+            flex-shrink: 0;
+        }
+
+        .back-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #444;
+        }
+
+        /* Hire page cards */
+        .hire-proj {
+            align-items: flex-start !important;
+            border-bottom: 8px solid var(--orange) !important;
+        }
+
+        .hire-proj h3 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 11px;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .hire-proj p {
+            font-size: 11px;
+            line-height: 1.9;
+            margin-bottom: 12px;
+        }
+
+        .proj-accent {
+            height: 9px;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        /* art view */
+        .art-img {
+            width: 100%;
+            height: 180px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            color: #999;
+            margin-bottom: 14px;
+            border: 3px solid #bbb;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .art-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .art-img:hover img {
+            transform: scale(1.06);
+        }
+
+        .art-img-placeholder {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: #aaa;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .art-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .art-desc {
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.9;
+        }
+
+        .art-num {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            opacity: 0.5;
+            margin-bottom: 6px;
+        }
+
+        .art-card-wrap {
+            cursor: pointer;
+        }
+
+        /* LIGHTBOX */
+        #art-lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.0);
+            align-items: center;
+            justify-content: center;
+            transition: background 0.35s ease;
+        }
+
+        #art-lightbox.lb-open {
+            display: flex;
+            background: rgba(0, 0, 0, 0.88);
+            animation: lbFadeIn 0.35s ease forwards;
+        }
+
+        @keyframes lbFadeIn {
+            from {
+                background: rgba(0, 0, 0, 0)
+            }
+
+            to {
+                background: rgba(0, 0, 0, 0.88)
+            }
+        }
+
+        #art-lightbox,
+        #proj-lightbox {
+            perspective: 1400px;
+        }
+
+        .lb-panel {
+            display: flex;
+            gap: 0;
+            max-width: 960px;
+            width: 92%;
+            background: #fff;
+            border: 6px solid #000;
+            box-shadow: 12px 12px 0 #000;
+            transform: rotateY(-90deg) scale(0.9);
+            opacity: 0;
+            animation: lbFlipIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.05s forwards;
+            position: relative;
+            max-height: 88vh;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        #pd-panel {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        @keyframes lbFlipIn {
+            to {
+                transform: rotateY(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes lbFlipOut {
+            to {
+                transform: rotateY(90deg) scale(0.9);
+                opacity: 0;
+            }
+        }
+
+        .lb-info {
+            flex: 1;
+            padding: 36px 30px;
+            overflow-y: auto;
+            background: linear-gradient(160deg, #0f0e17 0%, #1a1a2e 60%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-width: 240px;
+            max-width: 340px;
+            border-right: 4px solid #000;
+        }
+
+        /* Project lightbox info panel â€” blue-dark */
+        .lb-info.proj-info {
+            background: linear-gradient(160deg, #0a0a1a 0%, #0d1b2a 60%, #112240 100%);
+        }
+
+        .lb-num {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            color: #e8600a;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .lb-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 13px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+            color: #fff;
+        }
+
+        .lb-medium {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: #93a0b0;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .lb-desc-full {
+            font-size: 12px;
+            line-height: 2;
+            color: #cdd5e0;
+            flex: 1;
+        }
+
+        .lb-credit {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            color: #4a5568;
+            margin-top: 14px;
+            letter-spacing: 1px;
+            border-top: 1px solid #2d3748;
+            padding-top: 10px;
+        }
+
+        .lb-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 16px;
+        }
+
+        .lb-tag {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            padding: 5px 8px;
+            border: 2px solid #2d3748;
+            background: rgba(255, 255, 255, 0.06);
+            color: #a0aec0;
+        }
+
+        /* Project lightbox â€” light tags */
+        .proj-info .lb-tag {
+            border-color: #1e3a5f;
+            background: rgba(100, 180, 255, 0.07);
+            color: #90cdf4;
+        }
+
+        .proj-info .lb-title {
+            color: #e2e8f0;
+        }
+
+        .proj-info .lb-medium {
+            color: #63b3ed;
+        }
+
+        .proj-info .lb-desc-full {
+            color: #bee3f8;
+        }
+
+        .proj-info .lb-credit {
+            color: #2a4a6a;
+            border-color: #1e3a5f;
+        }
+
+        /* Project GitHub link */
+        .lb-gh-link {
+            display: inline-block;
+            margin-top: 16px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            padding: 9px 14px;
+            background: #e8600a;
+            color: #fff;
+            border: 3px solid #000;
+            box-shadow: 3px 3px 0 #000;
+            text-decoration: none;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .lb-gh-link:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #000;
+        }
+
+        /* Pixelated project mockup */
+        .proj-mockup {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0d1117;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            color: #30363d;
+            text-align: center;
+            padding: 20px;
+            image-rendering: pixelated;
+        }
+
+        .proj-mockup svg {
+            width: min(320px, 90%);
+            height: auto;
+        }
+
+        .lb-img-wrap {
+            flex: 1.4;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .lb-img-wrap img {
+            max-width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
+            border: 2px solid #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .lb-img-placeholder {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 9px;
+            color: #555;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .lb-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: #000;
+            color: #fff;
+            border: none;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 0 #444;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .lb-close:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #444;
+        }
+
+        .lb-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #000;
+            color: #fff;
+            border: none;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 0 #444;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .lb-nav:hover {
+            transform: translateY(-50%) translate(2px, 2px);
+            box-shadow: 1px 1px 0 #444;
+        }
+
+        #lb-prev {
+            left: -54px;
+        }
+
+        #lb-next {
+            right: -54px;
+        }
+
+        #commission-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0);
+            align-items: center;
+            justify-content: center;
+            perspective: 1400px;
+            transition: background 0.35s ease;
+        }
+
+        #commission-modal.cm-open {
+            display: flex;
+            background: rgba(0, 0, 0, 0.92);
+            animation: lbFadeIn 0.35s ease forwards;
+        }
+
+        .cm-panel {
+            display: flex;
+            max-width: 960px;
+            width: 94%;
+            max-height: 88vh;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            overflow: hidden;
+            transform: rotateY(-90deg) scale(0.9);
+            opacity: 0;
+            animation: lbFlipIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.05s forwards;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        /* ART GRID - 3 col then wrap to 12 */
+        .art-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        @media(max-width:920px) {
+            .art-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hire-cta-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:560px) {
+            .art-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hire-cta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* hire cta mini grid */
+        .hire-cta-grid {
+            display: grid;
+        }
+
+        /* PRICE CARD BUTTON (Screenshot Match) */
+        .price-card-btn {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            padding: 14px 24px;
+            background: transparent;
+            color: #000;
+            border: 4px solid #000;
+            cursor: pointer;
+            margin-top: auto;
+            width: 100%;
+            max-width: 220px;
+            clip-path: polygon(0 10px, 4px 10px, 4px 6px, 6px 6px, 6px 4px, 10px 4px, 10px 0,
+                    calc(100% - 10px) 0, calc(100% - 10px) 4px, calc(100% - 6px) 4px, calc(100% - 6px) 6px, calc(100% - 4px) 6px, calc(100% - 4px) 10px, 100% 10px,
+                    100% calc(100% - 10px), calc(100% - 4px) calc(100% - 10px), calc(100% - 4px) calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) calc(100% - 4px), calc(100% - 10px) calc(100% - 4px), calc(100% - 10px) 100%,
+                    10px 100%, 10px calc(100% - 4px), 6px calc(100% - 4px), 6px calc(100% - 6px), 4px calc(100% - 6px), 4px calc(100% - 10px), 0 calc(100% - 10px));
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .price-card-btn:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .price-category {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .price-subtitle {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 32px;
+        }
+
+        .price-large {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 32px;
+            margin-bottom: 40px;
+            line-height: 1;
+        }
+
+        .price-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 40px 0;
+            text-align: left;
+            width: 100%;
+        }
+
+        .price-features li {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .price-features li::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: #000;
+            display: inline-block;
+            clip-path: polygon(0 2px, 2px 2px, 2px 0, 6px 0, 6px 2px, 8px 2px, 8px 6px, 6px 6px, 6px 8px, 2px 8px, 2px 6px, 0 6px);
+        }
+
+        /* COUPON SECTION */
+        .coupon-wrap {
+            margin-top: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .coupon-input {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            padding: 10px 14px;
+            border: 3px solid #000;
+            background: #f5f5f5;
+            outline: none;
+            letter-spacing: 2px;
+            width: 200px;
+        }
+
+        .coupon-btn {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            padding: 10px 16px;
+            background: #000;
+            color: #fff;
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0 #444;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .coupon-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #444;
+        }
+
+        .coupon-msg {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            margin-top: 10px;
+            color: #166534;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .coupon-msg.error {
+            color: #dc2626;
+        }
+
+        /* COMMISSION MODAL */
+        #commission-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0);
+            align-items: center;
+            justify-content: center;
+            perspective: 1400px;
+        }
+
+        #commission-modal.cm-open {
+            display: flex;
+            background: rgba(0, 0, 0, 0.92);
+            animation: lbFadeIn 0.35s ease forwards;
+        }
+
+        .cm-panel {
+            display: flex;
+            max-width: 900px;
+            width: 92%;
+            max-height: 88vh;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            overflow: hidden;
+            transform: rotateY(-90deg) scale(0.9);
+            opacity: 0;
+            animation: lbFlipIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.05s forwards;
+            transform-style: preserve-3d;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .cm-info {
+            flex: 1;
+            padding: 32px 28px;
+            background: linear-gradient(160deg, #0a0a1a 0%, #0d1b2a 60%, #112240 100%);
+            overflow-y: auto;
+            min-width: 220px;
+            max-width: 320px;
+            border-right: 4px solid #000;
+        }
+
+        .cm-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 11px;
+            color: #d8b4fe;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .cm-subtitle {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: #a78bfa;
+            margin-bottom: 14px;
+            letter-spacing: 1px;
+        }
+
+        .cm-offer-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+
+        .cm-offer-list li {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6.5px;
+            color: #c4b5fd;
+            padding: 6px 0;
+            border-bottom: 1px solid #3730a3;
+            line-height: 1.8;
+        }
+
+        .cm-offer-list li::before {
+            content: 'âœ¦ ';
+            color: #e879f9;
+        }
+
+        .cm-note {
+            font-size: 10px;
+            color: #a78bfa;
+            line-height: 1.9;
+            margin-bottom: 16px;
+        }
+
+        .cm-credit {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            color: #4a3a7a;
+            margin-top: 14px;
+            border-top: 1px solid #3730a3;
+            padding-top: 10px;
+        }
+
+        /* Payment panel */
+        .cm-pay {
+            flex: 1.2;
+            padding: 32px 28px;
+            background: #fafafa;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pay-toggle {
+            display: flex;
+            gap: 0;
+            margin-bottom: 24px;
+            border: 3px solid #000;
+            width: fit-content;
+        }
+
+        .pay-tab {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            padding: 10px 16px;
+            cursor: pointer;
+            background: #fff;
+            border: none;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .pay-tab.active {
+            background: #000;
+            color: #fff;
+        }
+
+        .pay-form {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pay-form.visible {
+            display: flex;
+        }
+
+        .badge {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            padding: 4px 8px;
+            border: 1px solid var(--gray);
+            border-radius: 2px;
+            color: #ccc;
+            background: rgba(255, 255, 255, 0.05);
+            text-transform: uppercase;
+        }
+
+        .pay-label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            color: #666;
+            margin-bottom: -4px;
+        }
+
+        .pay-submit {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            padding: 12px 20px;
+            background: #000;
+            color: #fff;
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0 #444;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .pay-submit:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #444;
+        }
+
+        .mpesa-submit {
+            background: #00a651;
+            border-color: #00a651;
+            box-shadow: 4px 4px 0 #005a2a;
+        }
+
+        .mpesa-submit:hover {
+            box-shadow: 2px 2px 0 #005a2a;
+        }
+
+        .pay-status {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: #166534;
+            margin-top: 10px;
+            min-height: 20px;
+            line-height: 1.8;
+        }
+
+        .pay-status.error {
+            color: #dc2626;
+        }
+
+        .cm-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: #000;
+            color: #fff;
+            border: none;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 0 #444;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .cm-close:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #444;
+        }
+
+        /* PROJECT LIGHTBOX — same as art, reuses .lb-panel, .lb-nav, .lb-close */
+        #proj-lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.35s ease;
+        }
+
+        #proj-lightbox.lb-open {
+            display: flex;
+            background: rgba(0, 0, 0, 0.88);
+            animation: lbFadeIn 0.35s ease forwards;
+        }
+
+        #price-lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.35s ease;
+        }
+
+        #price-lightbox.lb-open {
+            display: flex;
+            background: rgba(0, 0, 0, 0.88);
+            animation: lbFadeIn 0.35s ease forwards;
+        }
+
+
+        @media(max-width:768px) {
+            .lb-panel {
+                flex-direction: column;
+                max-height: 92vh;
+            }
+
+            .lb-info {
+                max-width: 100%;
+                border-right: none;
+                border-bottom: 4px solid #000;
+                min-height: fit-content;
+            }
+
+            .lb-img-wrap {
+                min-height: 300px;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media(max-width:920px) {
+            nav {
+                padding: 14px 18px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            section {
+                padding: 78px 20px;
+            }
+
+            #art-view,
+            #hire-view {
+                padding: 88px 20px 60px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .approach-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stack-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hire-cta-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bot-container {
+                display: none;
+            }
+        }
+
+        @media(max-width:560px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-name {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Grainy Noise Filter -->
+    <svg style="display: none;">
+        <filter id="grainy-noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+            <feComponentTransfer>
+                <feFuncR type="linear" slope="0.1" />
+                <feFuncG type="linear" slope="0.1" />
+                <feFuncB type="linear" slope="0.1" />
+            </feComponentTransfer>
+            <feBlend in="SourceGraphic" in2="noise" mode="overlay" />
+        </filter>
+    </svg>
+    <!-- ————————————————————————————————————————————————————————————————— MAIN VIEW————————————————————————————————————————————————————————————————— -->
+    <div id="main-view">
+        <!-- NAV -->
+        <nav>
+            <div class="nav-logo">NF
+                <span>_
+                </span>DEV
+            </div>
+            <ul class="nav-links">
+                <li>
+                    <a href="#about">ABOUT
+                    </a>
+                </li>
+                <li>
+                    <a href="#projects">PROJECTS
+                    </a>
+                </li>
+                <li>
+                    <a href="#pricing">PRICING
+                    </a>
+                </li>
+                <li>
+                    <a href="#stack">STACK
+                    </a>
+                </li>
+                <li>
+                    <a href="#timeline">JOURNEY
+                    </a>
+                </li>
+                <li>
+                    <a href="#contact">CONTACT
+                    </a>
+                </li>
+            </ul>
+            <a href="javascript:void(0)" onclick="showView('hire')" class="nav-cta">HIRE ME
+            </a>
+        </nav>
+        <!-- HERO -->
+        <section id="hero">
+            <div class="hero-inner">
+                <p class="hero-eyebrow">// BACKEND ENGINEER
+                </p>
+                <h1 class="hero-name">NORRIS
+                    <br>
+                    <span>FRANK
+                    </span>
+                </h1>
+                <div class="hero-subtitle">
+                    <span id="type-output">
+                    </span>
+                    <span class="cursor">
+                    </span>
+                </div>
+                <p class="hero-tagline">I design and deploy structured backend systems with production-grade thinking.
+                    Financial data integrity. Clean architecture. Built to last.
+                </p>
+                <div class="hero-btns">
+                    <a href="javascript:void(0)" onclick="showView('hire')" class="btn-primary">HIRE ME
+                    </a>
+                    <a href="javascript:void(0)" onclick="showView('art')" class="btn-secondary">MORE ABOUT ME
+                    </a>
+                    <a href="https://github.com" target="_blank" class="btn-secondary">GITHUB
+                    </a>
+                </div>
+            </div>
+            <div class="bot-container">
+                <div style="display:flex;flex-direction:column;align-items:center;position:relative;">
+                    <div class="bot-body">
+                        <div class="bot-head">
+                        </div>
+                        <div class="bot-arm-l">
+                        </div>
+                        <div class="bot-arm-r">
+                        </div>
+                    </div>
+                    <div class="bot-legs">
+                        <div class="bot-leg">
+                        </div>
+                        <div class="bot-leg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-hint">▼ SCROLL ▼
+            </div>
+        </section>
+        <!-- ABOUT -->
+        <section id="about">
+            <div class="container">
+                <div class="about-grid reveal">
+                    <div class="about-visual">
+                        <div
+                            style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--orange);line-height:2.4;text-align:left;">
+                            <div style="color:#555;margin-bottom:6px;">// norris_frank.json
+                            </div>
+                            <div>
+                                <span style="color:#666">role
+                                </span>
+                                <span style="color:var(--white)">= "Backend Eng"
+                                </span>
+                            </div>
+                            <div>
+                                <span style="color:#666">focus
+                                </span>
+                                <span style="color:var(--white)">= "fintech"
+                                </span>
+                            </div>
+                            <div>
+                                <span style="color:#666">stack
+                                </span>
+                                <span style="color:var(--white)">= [node, pg]
+                                </span>
+                            </div>
+                            <div>
+                                <span style="color:#666">env
+                                </span>
+                                <span style="color:var(--white)">= "production"
+                                </span>
+                            </div>
+                            <div style="margin-top:12px;color:var(--green-light);">status:
+                                <span style="color:var(--orange)">OPEN_TO_WORK
+                                </span>
+                            </div>
+                            <div style="margin-top:8px;color:var(--orange);animation:blink 1s step-end infinite;">█
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-text">
+                        <h2 class="section-title" style="margin-bottom:20px;">ENGINEERING
+                            <br>MINDSET
+                        </h2>
+                        <p>I build backend systems that solve real problems — not demos, not toys. My work is centered
+                            on financial data integrity, clean API architecture, and code that holds up in production.
+                        </p>
+                        <p>I think in systems. Every decision — from database schema to authentication flow — is
+                            made with reliability and scale in mind. Not hype. Not hacks.
+                        </p>
+                        <p>If you need backend infrastructure that actually works when it matters, let's talk.
+                        </p>
+                    </div>
+                </div>
+                <div class="approach-grid reveal">
+                    <div class="approach-card">
+                        <span class="approach-icon">🧱
+                        </span>
+                        <h3>ARCHITECTURE-FIRST
+                        </h3>
+                        <p>System design before a single line of code. Schema decisions, API contracts, service
+                            boundaries — thought through upfront.
+                        </p>
+                    </div>
+                    <div class="approach-card">
+                        <span class="approach-icon">🔒
+                        </span>
+                        <h3>SECURE BY DEFAULT
+                        </h3>
+                        <p>JWT, RBAC, idempotency, input validation. Security is not an afterthought — it's baked into
+                            the design from day one.
+                        </p>
+                    </div>
+                    <div class="approach-card">
+                        <span class="approach-icon">🚀
+                        </span>
+                        <h3>PRODUCTION-AWARE
+                        </h3>
+                        <p>Environment configs, deployment pipelines, error handling. I build for go-live, not just
+                            localhost.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- PROJECTS -->
+        <section id="projects">
+            <div class="container">
+                <h2 class="section-title reveal">PROJECT SHOWCASE
+                </h2>
+                <p class="section-sub reveal">Systems built with production-grade thinking.
+                </p>
+                <div class="cards-grid">
+                    <div class="pcard-wrap reveal" style="animation-delay:0s;">
+                        <div class="pcard-outer">
+                            <div class="pcard-inner c-orange proj-inner">
+                                <div class="proj-label">FLAGSHIP PROJECT
+                                </div>
+                                <div class="proj-name">CHAMORA
+                                </div>
+                                <p class="proj-desc">A fintech-style backend for structured group savings and loan
+                                    disbursement. Transaction-safe contribution handling, role-based access, full audit
+                                    trail.
+                                </p>
+                                <div class="tech-badges">
+                                    <span class="badge">NODE.JS
+                                    </span>
+                                    <span class="badge">POSTGRESQL
+                                    </span>
+                                    <span class="badge">JWT
+                                    </span>
+                                    <span class="badge">REST API
+                                    </span>
+                                    <span class="badge">RENDER
+                                    </span>
+                                </div>
+                                <a href="javascript:void(0)" class="proj-link" onclick="openProjectLightbox(0)">VIEW
+                                    CASE STUDY →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pcard-wrap reveal" style="animation-delay:0.45s;">
+                        <div class="pcard-outer">
+                            <div class="pcard-inner c-blue proj-inner">
+                                <div class="proj-label">LOGISTICS BACKEND
+                                </div>
+                                <div class="proj-name">TITAN CARGO
+                                </div>
+                                <p class="proj-desc">Structured logistics management API. Shipment tracking, route
+                                    assignment, driver management, and reporting endpoints built for scale.
+                                </p>
+                                <div class="tech-badges">
+                                    <span class="badge">NODE.JS
+                                    </span>
+                                    <span class="badge">POSTGRESQL
+                                    </span>
+                                    <span class="badge">REST API
+                                    </span>
+                                    <span class="badge">DOCKER
+                                    </span>
+                                </div>
+                                <a href="javascript:void(0)" class="proj-link" onclick="openProjectLightbox(1)">VIEW
+                                    CASE STUDY →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pcard-wrap reveal" style="animation-delay:0.9s;">
+                        <div class="pcard-outer">
+                            <div class="pcard-inner c-green proj-inner">
+                                <div class="proj-label">OSINT DASHBOARD
+                                </div>
+                                <div class="proj-name">NORRY_GHOSTY
+                                </div>
+                                <p class="proj-desc">An OSINT intelligence-gathering dashboard with structured data
+                                    pipelines, external API integration, and a clean Python/Flask backend.
+                                </p>
+                                <div class="tech-badges">
+                                    <span class="badge">PYTHON
+                                    </span>
+                                    <span class="badge">FLASK
+                                    </span>
+                                    <span class="badge">POSTGRESQL
+                                    </span>
+                                    <span class="badge">REST APIs
+                                    </span>
+                                </div>
+                                <a href="javascript:void(0)" class="proj-link" onclick="openProjectLightbox(2)">VIEW
+                                    CASE STUDY →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- PRICING -->
+        <section id="pricing">
+            <div class="container">
+                <h2 class="section-title reveal">PRICING</h2>
+                <p class="section-sub reveal">Systems designed for your scale — pick your build.</p>
+                <div class="pricing-grid">
+                    <div class="pcard-wrap reveal price-float" style="--stagger: 0.1s"
+                        onclick="flipPricingCard(this, 0)">
+                        <div class="pcard-outer c-green-br">
+                            <div class="pcard-inner c-green price-inner" style="background:#86efac;">
+                                <div class="price-category">FRONTEND</div>
+                                <div class="price-subtitle">Modern UI/UX</div>
+                                <div class="price-large">$399</div>
+                                <ul class="price-features">
+                                    <li>Responsive UI</li>
+                                    <li>Pixel / Modern Design</li>
+                                    <li>Basic SEO</li>
+                                    <li>2 Revisions</li>
+                                </ul>
+                                <button class="price-card-btn" onclick="openPricingLightbox(0)">GET STARTED</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pcard-wrap reveal price-float" style="--stagger: 0.2s"
+                        onclick="flipPricingCard(this, 1)">
+                        <div class="pcard-outer c-orange-br">
+                            <div class="pcard-inner c-orange price-inner" style="background:#ffb366;">
+                                <div class="price-category">BACKEND</div>
+                                <div class="price-subtitle">API & Architecture</div>
+                                <div class="price-large">$699</div>
+                                <ul class="price-features">
+                                    <li>REST API Setup</li>
+                                    <li>Auth + JWT</li>
+                                    <li>Database Integration</li>
+                                    <li>Deployment Ready</li>
+                                </ul>
+                                <button class="price-card-btn" onclick="openPricingLightbox(1)">BUILD SERVER</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pcard-wrap reveal price-float" style="--stagger: 0.3s"
+                        onclick="flipPricingCard(this, 2)">
+                        <div class="pcard-outer c-red-br">
+                            <div class="pcard-inner c-red price-inner" style="background:#fca5a5;">
+                                <div class="price-category">FULLSTACK</div>
+                                <div class="price-subtitle">Complete Solution</div>
+                                <div class="price-large">$1,299</div>
+                                <ul class="price-features">
+                                    <li>Frontend + Backend</li>
+                                    <li>Auth + Payments</li>
+                                    <li>Dashboard</li>
+                                    <li>Production Deployment</li>
+                                </ul>
+                                <button class="price-card-btn" onclick="openPricingLightbox(2)">GO FULLSTACK</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pcard-wrap reveal price-float" style="--stagger: 0.4s"
+                        onclick="flipPricingCard(this, 3)">
+                        <div class="pcard-outer c-blue-br">
+                            <div class="pcard-inner c-white price-inner">
+                                <div class="price-category">CUSTOM</div>
+                                <div class="price-subtitle">Enterprise Scale</div>
+                                <div class="price-large">CUSTOM</div>
+                                <ul class="price-features">
+                                    <li>Advanced Architecture</li>
+                                    <li>Scalable Infrastructure</li>
+                                    <li>DevOps + CI/CD</li>
+                                    <li>Dedicated Team</li>
+                                </ul>
+                                <button class="price-card-btn" onclick="openPricingLightbox(3)">LET'S TALK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- COUPON CODE -->
+        <div class="coupon-wrap">
+            <p
+                style="font-family:'Press Start 2P',monospace;font-size:7px;color:#888;width:100%;text-align:center;margin-bottom:6px;">
+                // HAVE A COUPON CODE?
+            </p>
+            <input id="coupon-input-main" class="coupon-input" type="text" placeholder="ENTER CODE" maxlength="20">
+            <button class="coupon-btn" onclick="applyCouponMain()">APPLY
+            </button>
+        </div>
+        <p id="coupon-msg-main" class="coupon-msg">
+        </p>
+    </div>
+    <!-- PROJECT DETAIL OVERLAY -->
+    <div id="proj-detail" onclick="projDetailClickOutside(event)"
+        style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center; background:rgba(0,0,0,0.92);">
+        <div class="lb-panel" id="pd-panel" style="max-width:1100px; width:94%;">
+            <button class="lb-close" onclick="closeProjectDetail()">✕</button>
+            <div class="lb-info proj-info" style="max-width:420px;">
+                <div class="lb-num" id="pd-num"></div>
+                <div class="lb-title" id="pd-title"></div>
+                <div class="lb-medium" id="pd-medium"></div>
+                <div class="lb-desc-full" id="pd-desc"></div>
+                <div class="lb-tags" id="pd-tags"></div>
+                <div class="lb-credit">structured details</div>
+            </div>
+            <div class="lb-img-wrap" id="pd-content"
+                style="background:#111; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-start; padding:24px;">
+                <div
+                    style="font-family:'Press Start 2P', monospace; font-size:11px; color:#e8600a; margin-bottom:12px;">
+                    DETAILS</div>
+                <div id="pd-sections"
+                    style="font-family:'Space Mono', monospace; color:#e2e8f0; font-size:12px; line-height:1.9;"></div>
+            </div>
+        </div>
+    </div>
+    </section>
+    <!-- TECHNICAL SKILLS STRUCTURED -->
+    <section id="skills-structured">
+        <div class="container">
+            <h2 class="section-title reveal">TECHNICAL SKILLS</h2>
+            <p class="section-sub reveal">Structured capabilities — production oriented.</p>
+            <div class="cards-grid" id="skills-grid">
+                <div class="pcard-outer c-orange-br">
+                    <div class="pcard-inner c-orange" style="align-items:flex-start">
+                        <div class="proj-label">BACKEND</div>
+                        <div class="proj-name">API & Data</div>
+                        <ul style="font-size:12px; line-height:2; color:#000;">
+                            <li>Node.js</li>
+                            <li>Express</li>
+                            <li>JWT</li>
+                            <li>PostgreSQL</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pcard-outer c-blue-br">
+                    <div class="pcard-inner c-blue" style="align-items:flex-start">
+                        <div class="proj-label">FRONTEND</div>
+                        <div class="proj-name">UI Engineering</div>
+                        <ul style="font-size:12px; line-height:2; color:#000;">
+                            <li>React</li>
+                            <li>Tailwind</li>
+                            <li>Responsive UI</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pcard-outer c-green-br">
+                    <div class="pcard-inner c-green" style="align-items:flex-start">
+                        <div class="proj-label">DEVOPS</div>
+                        <div class="proj-name">Delivery</div>
+                        <ul style="font-size:12px; line-height:2; color:#000;">
+                            <li>Render</li>
+                            <li>GitHub Actions</li>
+                            <li>Environment Configs</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pcard-outer c-purple-br">
+                    <div class="pcard-inner c-purple" style="align-items:flex-start">
+                        <div class="proj-label">CONCEPTS</div>
+                        <div class="proj-name">Architecture</div>
+                        <ul style="font-size:12px; line-height:2; color:#000;">
+                            <li>REST Architecture</li>
+                            <li>MVC Pattern</li>
+                            <li>Auth Flows</li>
+                            <li>DB Normalization</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pcard-outer c-red-br">
+                    <div class="pcard-inner c-red" style="align-items:flex-start">
+                        <div class="proj-label">SECURITY</div>
+                        <div class="proj-name">Defense</div>
+                        <ul style="font-size:12px; line-height:2; color:#000;">
+                            <li>Input Validation</li>
+                            <li>Rate Limiting</li>
+                            <li>RBAC</li>
+                            <li>Audit Trails</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pcard-outer c-white-br">
+                    <div class="pcard-inner c-white" style="align-items:flex-start; background:#ffd166;">
+                        <div class="proj-label">TESTING</div>
+                        <div class="proj-name">Quality</div>
+                        <ul style="font-size:12px; line-height:2; color:#000;">
+                            <li>Unit Tests</li>
+                            <li>Integration</li>
+                            <li>Mocks</li>
+                            <li>CI Gates</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pcard-outer c-blue-br">
+                    <div class="pcard-inner c-white" style="align-items:flex-start; background:#93c5fd;">
+                        <div class="proj-label">PERFORMANCE</div>
+                        <div class="proj-name">Efficiency</div>
+                        <ul style="font-size:12px; line-height:2; color:#000;">
+                            <li>Caching</li>
+                            <li>Profiling</li>
+                            <li>Async Jobs</li>
+                            <li>Pagination</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pcard-outer c-green-br">
+                    <div class="pcard-inner c-white" style="align-items:flex-start; background:#86efac;">
+                        <div class="proj-label">DATA TOOLS</div>
+                        <div class="proj-name">Ops</div>
+                        <ul style="font-size:12px; line-height:2; color:#000;">
+                            <li>Migrations</li>
+                            <li>Seed Scripts</li>
+                            <li>ETL</li>
+                            <li>Backups</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- SKILLS DETAIL OVERLAY -->
+    <div id="skills-detail" onclick="skillsDetailClickOutside(event)"
+        style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center; background:rgba(0,0,0,0.92);">
+        <div class="lb-panel" id="sd-panel" style="max-width:900px; width:92%;">
+            <button class="lb-close" onclick="closeSkillsDetail()">✕</button>
+            <div class="lb-info proj-info" style="max-width:360px;">
+                <div class="lb-num" id="sd-num">// SKILL_LOG</div>
+                <div class="lb-title" id="sd-title"></div>
+                <div class="lb-medium" id="sd-sub"></div>
+                <div class="lb-desc-full" id="sd-desc"></div>
+            </div>
+            <div class="lb-img-wrap" id="sd-content"
+                style="background:#111; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-start; padding:40px; overflow-y:auto;">
+                <div
+                    style="font-family:'Press Start 2P', monospace; font-size:11px; color:#e8600a; margin-bottom:20px; text-transform:uppercase;">
+                    IMPLEMENTATION_RECORDS</div>
+                <div id="sd-sections"
+                    style="font-family:'Space Mono', monospace; color:#e2e8f0; font-size:12px; line-height:2.2; width:100%;">
+                </div>
+                <div class="lb-credit"
+                    style="font-size:8px; color:#4a5568; margin-top:30px; border-top:1px solid #2d3748; padding-top:10px; width:100%; font-family:'Space Mono', monospace;">
+                    VERIFIED_BY_NORRIS_FRANK
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- TECH STACK -->
+    <section id="problems">
+        <div class="container">
+            <h2 class="section-title reveal">ENGINEERING PROBLEMS</h2>
+            <p class="section-sub reveal">Issues met, fixes applied, and how to avoid them.</p>
+            <div class="cards-grid" id="problems-grid">
+
+                <!-- cards injected by JS from problemData -->
+            </div>
+        </div>
+    </section>
+    <section id="stack">
+        <div class="container">
+            <h2 class="section-title reveal">TECH STACK
+            </h2>
+            <p class="section-sub reveal">Tools I actually use in production — no fluff.
+            </p>
+            <div class="stack-grid">
+                <div class="stack-card reveal">
+                    <span class="stack-icon">⬢
+                    </span>
+                    <span class="stack-name">NODE.JS
+                    </span>
+                    <div class="stack-tip">Primary runtime for REST API servers and service logic.
+                    </div>
+                </div>
+                <div class="stack-card reveal">
+                    <span class="stack-icon">🐘
+                    </span>
+                    <span class="stack-name">POSTGRESQL
+                    </span>
+                    <div class="stack-tip">Relational DB of choice. ACID-compliant, financially reliable.
+                    </div>
+                </div>
+                <div class="stack-card reveal">
+                    <span class="stack-icon">🐍
+                    </span>
+                    <span class="stack-name">PYTHON
+                    </span>
+                    <div class="stack-tip">Used for scripting, data pipelines, and Flask services.
+                    </div>
+                </div>
+                <div class="stack-card reveal">
+                    <span class="stack-icon">🫙
+                    </span>
+                    <span class="stack-name">FLASK
+                    </span>
+                    <div class="stack-tip">Lightweight backend framework for Python-based APIs.
+                    </div>
+                </div>
+                <div class="stack-card reveal">
+                    <span class="stack-icon">🔑
+                    </span>
+                    <span class="stack-name">JWT / RBAC
+                    </span>
+                    <div class="stack-tip">Authentication and role-based access in every serious project.
+                    </div>
+                </div>
+                <div class="stack-card reveal">
+                    <span class="stack-icon">🔗
+                    </span>
+                    <span class="stack-name">REST APIs
+                    </span>
+                    <div class="stack-tip">Structured endpoints — versioned, documented, consistent.
+                    </div>
+                </div>
+                <div class="stack-card reveal">
+                    <span class="stack-icon">⑂
+                    </span>
+                    <span class="stack-name">GIT
+                    </span>
+                    <div class="stack-tip">Version control, branching strategy, clean commit history.
+                    </div>
+                </div>
+                <div class="stack-card reveal">
+                    <span class="stack-icon">☁
+                    </span>
+                    <span class="stack-name">RENDER
+                    </span>
+                    <div class="stack-tip">Deployment platform for production Node and Python services.
+                    </div>
+                </div>
+                <div class="stack-card reveal">
+                    <span class="stack-icon">🐧
+                    </span>
+                    <span class="stack-name">LINUX
+                    </span>
+                    <div class="stack-tip">Server environment. Shell scripting, process management, deployments.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- TIMELINE -->
+    <section id="timeline">
+        <div class="container">
+            <h2 class="section-title reveal">THE JOURNEY
+            </h2>
+            <p class="section-sub reveal">Evolution of an engineer.
+            </p>
+            <div class="timeline">
+                <div class="timeline-item reveal">
+                    <div class="tl-year">2023</div>
+                    <div class="tl-title">STARTED CODING</div>
+                    <div class="tl-desc">Began with Python fundamentals, logic and problem-solving.</div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="tl-year">Late 2023</div>
+                    <div class="tl-title">FIRST FRONTEND UI</div>
+                    <div class="tl-desc">Built my first UI — learned layout, typography and basic interactivity.</div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="tl-year">H1 2024</div>
+                    <div class="tl-title">FRONTEND PRACTICE</div>
+                    <div class="tl-desc">Created four more UIs to refine patterns and component structure.</div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="tl-year">H2 2024</div>
+                    <div class="tl-title">BACKEND & DATABASES</div>
+                    <div class="tl-desc">Shifted focus to APIs, data modeling and reliability.</div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="tl-year">2024–May 2025</div>
+                    <div class="tl-title">BACKEND MAJOR</div>
+                    <div class="tl-desc">Studied and specialized in backend systems for a full year.</div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="tl-year">Mid 2025</div>
+                    <div class="tl-title">MORE FRONTEND DEPLOYS</div>
+                    <div class="tl-desc">Shipped a few frontends, then dove deep into deployment engineering.</div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="tl-year">Sep 2025</div>
+                    <div class="tl-title">DOUBLE EYE AI — FULLSTACK DEPLOY</div>
+                    <div class="tl-desc">First fullstack deployment — set up end-to-end CI/CD and hosting.</div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="tl-year">Dec 2025</div>
+                    <div class="tl-title">TITAN CARGO</div>
+                    <div class="tl-desc">Logistics backend deployed — structured tracking and driver coordination.</div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="tl-year">Feb 2026</div>
+                    <div class="tl-title">OSINT ROOT KIT + WEB</div>
+                    <div class="tl-desc">Delivered a terminal root kit and a web URL companion for reconnaissance.</div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="tl-year">Mar 2026</div>
+                    <div class="tl-title">CHAMORA — IN PROGRESS</div>
+                    <div class="tl-desc">Fintech-style backend — targeted completion by end of March.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="container">
+            <div class="contact-inner reveal">
+                <p class="contact-tag">// READY TO BUILD?
+                </p>
+                <h2 class="section-title">LET'S BUILD
+                    <br>SYSTEMS.
+                </h2>
+                <p class="section-sub" style="margin-top:16px;">Backend infrastructure, financial systems, API
+                    architecture.
+                    <br>If it's complex and needs to work — reach out.
+                </p>
+                <a href="mailto:norris@example.com" class="btn-primary">SEND A MESSAGE
+                </a>
+                <div class="contact-links">
+                    <a href="mailto:norris@example.com" class="contact-link">✉ EMAIL
+                    </a>
+                    <a href="https://github.com" target="_blank" class="contact-link">⑂ GITHUB
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" class="contact-link">💼 LINKEDIN
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer>BUILT BY
+        <span>NORRIS FRANK
+        </span> — BACKEND ENGINEER — 2025
+    </footer>
+    </div>
+    <!-- /main-view -->
+    <!-- ————————————————————————————————————————————————————————————————— ART VIEW————————————————————————————————————————————————————————————————— -->
+    <div id="art-view">
+        <div class="view-bg-icons" id="art-bg-icons"></div>
+        <div class="container">
+            <div class="view-header">
+                <div>
+                    <h2 class="section-title">MY ART COLLECTION
+                    </h2>
+                    <p class="section-sub" style="margin-bottom:0;">Where pencil meets soul — hand-drawn originals by
+                        Norris Frank.
+                    </p>
+                </div>
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <button class="btn-primary" onclick="openCommission()">COMMISSION ME
+                    </button>
+                    <button class="back-btn" onclick="showView('main')">← BACK HOME
+                    </button>
+                </div>
+            </div>
+            <div class="art-grid" id="art-grid">
+                <!-- cards injected by JS -->
+            </div>
+        </div>
+    </div>
+    <!-- ART LIGHTBOX OVERLAY -->
+    <div id="art-lightbox" onclick="lbClickOutside(event)">
+        <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)">‹
+        </button>
+        <div class="lb-panel" id="lb-panel">
+            <button class="lb-close" onclick="closeLightbox()">✕
+            </button>
+            <div class="lb-info">
+                <div class="lb-num" id="lb-num">
+                </div>
+                <div class="lb-title" id="lb-title">
+                </div>
+                <div class="lb-medium" id="lb-medium">
+                </div>
+                <div class="lb-desc-full" id="lb-desc-full">
+                </div>
+                <div class="lb-tags" id="lb-tags">
+                </div>
+                <div class="lb-credit" id="lb-credit">
+                </div>
+            </div>
+            <div class="lb-img-wrap" id="lb-img-wrap">
+            </div>
+        </div>
+        <button class="lb-nav" id="lb-next" onclick="lbNav(1)">›
+        </button>
+    </div>
+    <!-- PROJECT LIGHTBOX OVERLAY -->
+    <div id="proj-lightbox" onclick="projLbClickOutside(event)">
+        <div class="lb-panel" id="plb-panel">
+            <button class="lb-close" onclick="closeProjectLightbox()">✕
+            </button>
+            <div class="lb-info proj-info">
+                <div class="lb-num" id="plb-num">
+                </div>
+                <div class="lb-title" id="plb-title">
+                </div>
+                <div class="lb-medium" id="plb-category">
+                </div>
+                <div class="lb-desc-full" id="plb-desc">
+                </div>
+                <div class="lb-tags" id="plb-tags">
+                </div>
+                <a id="plb-gh-link" href="#" target="_blank" class="lb-gh-link"
+                    style="display:none; margin-right:8px;">⑂ VIEW ON GITHUB →
+                </a>
+                <a id="plb-live-link" href="#" target="_blank" class="lb-gh-link" style="display:none;">VISIT SITE →
+                </a>
+            </div>
+            <div class="lb-img-wrap" id="plb-img-wrap">
+            </div>
+        </div>
+    </div>
+    <!-- COMMISSION MODAL -->
+    <div id="commission-modal" class="lightbox" onclick="cmClickOutside(event)">
+        <div class="cm-panel">
+            <div class="pcard-outer c-blue-br" id="cm-outer-card">
+                <div class="pcard-inner c-blue" id="cm-inner-card" style="padding:40px;">
+                    <button class="cm-close" onclick="closeCommission()">×</button>
+                    <h2
+                        style="font-family:'Press Start 2P', monospace; font-size:18px; color:#000; margin-bottom:18px; text-transform:uppercase;">
+                        COMMISSION ART</h2>
+
+                    <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:28px; align-items:start;">
+                        <div class="cm-info">
+                            <p
+                                style="font-size:12px; font-weight:600; line-height:1.8; margin-bottom:20px; color:#e2e8f0;">
+                                Get a custom
+                                hand-drawn masterpiece. I specialize in high-detail pencil portraits, mechanical
+                                studies, and vibrant colored pencil works on canvas or paper.</p>
+
+                            <div
+                                style="background:#fff; padding:18px; border:4px solid #000; box-shadow:6px 6px 0 #000; margin-bottom:20px;">
+                                <h4
+                                    style="font-family:'Press Start 2P', monospace; font-size:10px; margin-bottom:10px; color:#000;">
+                                    DIRECT CONTACT</h4>
+                                <p
+                                    style="font-size:11px; margin-bottom:8px; font-family:'Space Mono', monospace; color:#000;">
+                                    EMAIL: <a href="mailto:norrisfrankmeyo@gmail.com"
+                                        style="color:#000; text-decoration:none;">norrisfrankmeyo@gmail.com</a>
+                                </p>
+                                <p style="font-size:11px; font-family:'Space Mono', monospace; color:#000;">PHONE:
+                                    <a href="tel:+254757494163" style="color:#000; text-decoration:none;">+254 757
+                                        494 163</a>
+                                </p>
+                            </div>
+
+                            <p style="font-size:10px; color:#000; font-weight:600;">Turnaround: 7-14 days.</p>
+                        </div>
+
+                        <div
+                            style="display:flex; flex-direction:column; gap:16px; background:#fff; padding:20px; border:4px solid #000; box-shadow:8px 8px 0 #000;">
+                            <div style="border-bottom:2px solid #000; padding:8px 0;">
+                                <label
+                                    style="display:block; font-family:'Press Start 2P', monospace; font-size:8px; margin-bottom:10px; color:#666;">YOUR
+                                    NAME</label>
+                                <input type="text"
+                                    style="width:100%; border:none; background:transparent; font-family:'Space Mono', monospace; font-size:16px; outline:none;"
+                                    placeholder="Required">
+                            </div>
+                            <div style="border-bottom:2px solid #000; padding:8px 0;">
+                                <label
+                                    style="display:block; font-family:'Press Start 2P', monospace; font-size:8px; margin-bottom:10px; color:#666;">EMAIL</label>
+                                <input type="email"
+                                    style="width:100%; border:none; background:transparent; font-family:'Space Mono', monospace; font-size:16px; outline:none;"
+                                    placeholder="you@example.com">
+                            </div>
+                            <div style="border-bottom:2px solid #000; padding:8px 0;">
+                                <label
+                                    style="display:block; font-family:'Press Start 2P', monospace; font-size:8px; margin-bottom:10px; color:#666;">PHONE</label>
+                                <input type="text"
+                                    style="width:100%; border:none; background:transparent; font-family:'Space Mono', monospace; font-size:16px; outline:none;"
+                                    placeholder="+254...">
+                            </div>
+                            <div style="border-bottom:2px solid #000; padding:8px 0;">
+                                <label
+                                    style="display:block; font-family:'Press Start 2P', monospace; font-size:8px; margin-bottom:10px; color:#666;">COMMISSION
+                                    TYPE</label>
+                                <select
+                                    style="width:100%; border:none; background:transparent; font-family:'Space Mono', monospace; font-size:14px; outline:none; cursor:pointer;">
+                                    <option>PENCIL PORTRAIT</option>
+                                    <option>COLOURED PENCIL</option>
+                                    <option>INK / CONCEPT ART</option>
+                                    <option>FAN ART</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    style="display:block; font-family:'Press Start 2P', monospace; font-size:8px; margin-bottom:10px; color:#666;">BRIEF
+                                    DESCRIPTION</label>
+                                <textarea
+                                    style="width:100%; border:2px solid #ddd; padding:12px; font-family:'Space Mono', monospace; font-size:13px; min-height:100px; outline:none;"
+                                    placeholder="Tell me about your vision..."></textarea>
+                            </div>
+                            <button class="btn-primary" style="width:100%; font-size:11px; padding:14px;"
+                                onclick="submitCommissionInquiry(this)">SEND
+                                INQUIRY →</button>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:center; margin-top:20px;">
+                        <div class="pcard-outer c-blue-br" id="cm-footer-outer" style="max-width:420px; width:100%;">
+                            <div class="pcard-inner c-white" id="cm-footer-inner"
+                                style="padding:14px; text-align:center;">
+                                <div
+                                    style="font-size:8px; color:#000; font-family:'Space Mono', monospace; text-transform:uppercase;">
+                                    created by Norris Frank Meyo · all rights reserved
+                                </div>
+                                <div
+                                    style="margin-top:6px; font-size:9px; color:#000; font-family:'Press Start 2P', monospace;">
+                                    +254 757 494 163
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ————————————————————————————————————————————————————————————————— HIRE VIEW————————————————————————————————————————————————————————————————— -->
+    <div id="hire-view">
+        <div class="view-bg-icons" id="hire-bg-icons"></div>
+        <div class="container">
+            <div class="view-header">
+                <div>
+                    <h2 class="section-title">WORK WITH ME
+                    </h2>
+                    <p class="section-sub" style="margin-bottom:0;">Production systems, architecture &
+                        deployment
+                        strategies.
+                    </p>
+                </div>
+                <button class="back-btn" onclick="showView('main')">← BACK HOME
+                </button>
+            </div>
+            <!-- Projects on hire page -->
+            <p
+                style="font-family:'Press Start 2P',monospace;font-size:9px;color:#e8600a;letter-spacing:3px;margin-bottom:28px;">
+                // SELECTED WORK
+            </p>
+            <!-- Selected work on hire page -->
+            <div class="cards-grid" id="hire-projects-grid">
+                <!-- cards injected by JS -->
+            </div>
+
+        </div>
+
+        <!-- HIRE CTA -->
+        <div style="margin-top:72px;">
+            <p
+                style="font-family:'Press Start 2P',monospace;font-size:9px;color:#e8600a;letter-spacing:3px;margin-bottom:28px; text-align:center;">
+                // CHOOSE YOUR BUILD</p>
+            <div class="pricing-grid">
+                <!-- FRONTEND -->
+                <div class="pcard-wrap reveal price-float" style="--stagger: 0.1s" onclick="flipPricingCard(this, 0)">
+                    <div class="pcard-outer c-green-br">
+                        <div class="pcard-inner c-green price-inner" style="background:#86efac;">
+                            <div class="price-category">FRONTEND</div>
+                            <div class="price-subtitle">Modern UI/UX</div>
+                            <div class="price-large">$399</div>
+                            <ul class="price-features">
+                                <li>Responsive UI</li>
+                                <li>Pixel / Modern Design</li>
+                                <li>Basic SEO</li>
+                                <li>2 Revisions</li>
+                            </ul>
+                            <button class="price-card-btn" onclick="openPricingLightbox(0)">GET STARTED</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- BACKEND -->
+                <div class="pcard-wrap reveal price-float" style="--stagger: 0.2s" onclick="flipPricingCard(this, 1)">
+                    <div class="pcard-outer c-orange-br">
+                        <div class="pcard-inner c-orange price-inner" style="background:#ffb366;">
+                            <div class="price-category">BACKEND</div>
+                            <div class="price-subtitle">API & Architecture</div>
+                            <div class="price-large">$699</div>
+                            <ul class="price-features">
+                                <li>REST API Setup</li>
+                                <li>Auth + JWT</li>
+                                <li>Database Integration</li>
+                                <li>Deployment Ready</li>
+                            </ul>
+                            <button class="price-card-btn" onclick="openPricingLightbox(1)">BUILD SERVER</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- FULLSTACK -->
+                <div class="pcard-wrap reveal price-float" style="--stagger: 0.3s" onclick="flipPricingCard(this, 2)">
+                    <div class="pcard-outer c-red-br">
+                        <div class="pcard-inner c-red price-inner" style="background:#fca5a5;">
+                            <div class="price-category">FULLSTACK</div>
+                            <div class="price-subtitle">Complete Solution</div>
+                            <div class="price-large">$1,299</div>
+                            <ul class="price-features">
+                                <li>Frontend + Backend</li>
+                                <li>Auth + Payments</li>
+                                <li>Dashboard</li>
+                                <li>Production Deployment</li>
+                            </ul>
+                            <button class="price-card-btn" onclick="openPricingLightbox(2)">GO FULLSTACK</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- CUSTOM -->
+                <div class="pcard-wrap reveal price-float" style="--stagger: 0.4s" onclick="flipPricingCard(this, 3)">
+                    <div class="pcard-outer c-blue-br">
+                        <div class="pcard-inner c-white price-inner">
+                            <div class="price-category">CUSTOM</div>
+                            <div class="price-subtitle">Enterprise Scale</div>
+                            <div class="price-large">CUSTOM</div>
+                            <ul class="price-features">
+                                <li>Advanced Architecture</li>
+                                <li>Scalable Infrastructure</li>
+                                <li>DevOps + CI/CD</li>
+                                <li>Dedicated Team</li>
+                            </ul>
+                            <button class="price-card-btn" onclick="openPricingLightbox(3)">LET'S TALK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Contact -->
+        <div style="text-align:center;margin-top:72px;padding-bottom:48px;">
+            <p
+                style="font-family:'Press Start 2P',monospace;font-size:9px;color:#e8600a;letter-spacing:3px;margin-bottom:18px;">
+                // GET IN TOUCH
+            </p>
+            <a href="mailto:norrisfrankmeyo@gmail.com"
+                style="font-family:'Press Start 2P',monospace;font-size:9px;padding:14px 26px;background:#000;color:#fff;border:4px solid #444;box-shadow:6px 6px 0 #444;text-decoration:none;display:inline-block;transition:transform 0.1s,box-shadow 0.1s;"
+                onmouseover="this.style.transform='translate(3px,3px)';this.style.boxShadow='3px 3px 0 #444'"
+                onmouseout="this.style.transform='';this.style.boxShadow='6px 6px 0 #444'"> ✉
+                norrisfrankmeyo@gmail.com
+            </a>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const artPieces = [
+            { num: '01', title: 'THE ELDER', medium: 'Pencil & Coloured Pencil on Paper', img: 'art/art_01_elder.jpg', desc: 'A deeply textured portrait capturing the wisdom of age. The left eye is revealed through a torn paper effect, symbolizing hidden layers of personality. Each wrinkle tells a story of survival and experience. This piece explores the resilience and dignity of the human spirit in its later years.', tags: ['PORTRAIT', 'PENCIL', 'REALISM'] },
+            { num: '02', title: 'BUMBLEBEE', medium: 'Graphite Pencil on Paper', img: 'art/art_02_bumblebee.jpg', desc: 'A detailed mechanical study of Bumblebee from the Transformers universe. Focuses on the intricate layering of metal parts, gears, and hydraulic systems using various graphite grades for depth. The drawing aims to translate the complexity of mechanical engineering into an organic artistic form.', tags: ['FAN-ART', 'MECHANICAL'] },
+            { num: '03', title: 'LION — THE ROAR', medium: 'Ink & Graphite on Paper', img: 'art/art_03_lion_roar.jpg', desc: 'Capturing raw power and dominance through explosive ink strokes and sharp graphite textures. The mane ripples with intensity, embodying the king of the savannah in its most powerful state. This piece uses high contrast to emphasize the beast\'s primal energy.', tags: ['WILDLIFE', 'INK', 'POWER'] },
+            { num: '04', title: 'LION — THE SERENE', medium: 'Graphite Pencil on Paper', img: 'art/art_04_lion_serene.jpg', desc: 'A counterpart to "The Roar", this piece explores internal strength and calmness. The gaze is steady and peaceful, hidden within soft, ribbon-like graphite mane. It challenges the viewer to look beyond strength and see the composure required to lead.', tags: ['WILDLIFE', 'CALM'] },
+            { num: '05', title: 'AFRICAN ROYALTY', medium: 'Coloured Pencil on Canvas', img: 'art/art_05_african_child.jpg', desc: 'A celebration of heritage, beauty, and the vibrant future of the continent. Rich skin tones are achieved through careful layering of coloured pencils, highlighting the light and warmth of the subject. The golden tones symbolize the inherent wealth and royalty within African lineage.', tags: ['PORTRAIT', 'AFRICA'] },
+            { num: '06', title: 'NARUTO', img: 'art/Naruto.jpeg', desc: 'A classic tribute to the Knucklehead Ninja. This piece captures Naruto Uzumaki\'s infectious energy and determination, rendered with sharp lines and dynamic shading. It reflects the themes of perseverance and bond-building that define the series.', tags: ['ANIME', 'NARUTO'] },
+            { num: '07', title: 'VENOM', img: 'art/Venom.jpeg', desc: 'An exploration of dark, organic textures. Venom\'s chaotic form is depicted with high contrast and liquid-like shading, emphasizing the symbiotic relationship between host and alien. The focus is on the unsettling fluidity of the symbiote.', tags: ['COMICS', 'MARVEL'] },
+            { num: '08', title: 'SASUKE', img: 'art/sasuke.jpeg', desc: 'Focusing on the cool intensity and legendary Uchiha resolve. The composition highlights Sasuke\'s focused gaze and the sharp edges of his signature aesthetic. It represents the darker, more calculated path of strength.', tags: ['ANIME', 'NARUTO'] },
+            { num: '09', title: 'ANGEL', img: 'art/angel.jpeg', desc: 'A spiritual study of form and light. This piece conveys a sense of ethereal presence through soft shading and delicate linework, exploring the intersection of the human and divine. The wings are rendered with a focus on lightness and grace.', tags: ['SPIRITUAL'] },
+            { num: '10', title: 'HINDU GIRL', img: 'art/Hindu Girl.jpeg', desc: 'A richly textured cultural portrait. Focuses on the intricate details of traditional attire and the profound expression of the subject, rendered with deep graphite tones. The contrast between her jewelry and the soft realism of her expression is key.', tags: ['PORTRAIT', 'CULTURE'] },
+            { num: '11', title: 'HYROGLY', img: 'art/Hyrogly - Copy (2).jpeg', desc: 'An abstract exploration of ancient symbols and modern textures. This piece blends historical motifs with contemporary shading techniques to create a timeless, mysterious atmosphere. It invites interpretation of lost languages.', tags: ['ABSTRACT'] },
+            { num: '12', title: 'ONE EYE', img: 'art/one eye.jpeg', desc: 'A hyper-realistic study of the human eye. Explores the complex reflections, textures, and depth of the iris, serving as a masterclass in detail and focus. It emphasizes the eye as the window to the soul, reflecting the artist\'s surroundings.', tags: ['REALISM'] }
+        ];
+
+        const projectData = [
+            { num: '01', title: 'CHAMORA', type: 'finance', tech: ['NODE.JS', 'POSTGRESQL', 'JWT', 'M-PESA'], desc: 'A full-scale fintech platform designed for group savings (Chamas) in Kenya. It features deep M-Pesa STK Push integration, a robust audit trail, role-based access control, and automated contribution reminders. The core challenge was handling real-time ledger synchronization during high-concurrency transaction events.', screenshotUrl: 'art/chamora.png' },
+            { num: '02', title: 'TITAN CARGO', type: 'cargo', tech: ['NODE.JS', 'DOCKER', 'POSTGRESQL', 'REDIS'], desc: 'A high-performance logistics tracking API designed for large-scale cargo operations. It manages real-time container status, automated customs documentation, and efficient route optimization. Built with a microservices architecture to ensure horizontal scalability and fault tolerance in critical supply chain workflows.', liveUrl: 'https://titan-backend-igvr.onrender.com/', githubUrl: 'https://github.com/norrisfrank/Titan-Cargo', screenshotUrl: 'art/titan cargo.png' },
+            { num: '03', title: 'NORRY GHOSTY', type: 'osint', tech: ['PYTHON', 'FLASK', 'OSINT', 'REST'], desc: 'An advanced OSINT dashboard for digital investigation and reconnaissance. It provides structured data pipelines to gather and visualize publicly available intelligence from multiple platforms. The system employs stealthy scraping techniques and rate-limit handling to ensure reliable data collection without detection.', liveUrl: 'https://norry-ghosty.onrender.com/', githubUrl: 'https://github.com/norrisfrank/Norry-Ghosty', screenshotUrl: 'art/norryghosty.png' },
+            { num: '04', title: 'LOOP AI CRM', type: 'crm', tech: ['JS', 'OPENAI', 'NODE.JS', 'MONGODB'], desc: 'An AI-powered CRM that automates lead qualification and client communication using natural language processing. It features smart sentiment analysis and automated response generation based on historical client interactions. The goal was to reduce manual overhead for sales teams by over 60%.', liveUrl: 'https://norrisfrank.github.io/Loop-AI-AI-Assisted-CRM-/', githubUrl: 'https://github.com/norrisfrank/Loop-AI-AI-Assisted-CRM-', screenshotUrl: 'art/loop ai.png' },
+            { num: '05', title: 'NORRY ODYSSEY', type: 'travel', tech: ['HTML', 'CSS', 'JS', 'LEAFLET'], desc: 'A premium travel discovery platform focused on off-the-beaten-path experiences. It combines interactive mapping with deep storytelling to guide users through unique locations. The front-end is optimized for lightweight performance on mobile devices in low-bandwidth regions.', liveUrl: 'https://norrisfrank.github.io/Norry-Odyssey/', githubUrl: 'https://github.com/norrisfrank/Norry-Odyssey', screenshotUrl: 'art/norryodessy.png' },
+            { num: '06', title: 'PESA TRACK', type: 'finance', tech: ['NODE.JS', 'M-PESA API', 'SQLITE'], desc: 'A personal finance tracking tool that automatically categorizes M-Pesa transactions for better budget management. It provides visual insights into spending habits and identifies potential savings. Built for privacy, with all data stored locally on the user\'s device.', liveUrl: 'https://norrisfrank.github.io/PesaTrack/', githubUrl: 'https://github.com/norrisfrank/PesaTrack', screenshotUrl: 'art/pesatrack.png' },
+            { num: '07', title: 'GHOST NORRY', type: 'chatbot', tech: ['PYTHON', 'TRANSFORMERS', 'LANGCHAIN'], desc: 'A specialized OSINT system capable of fast information gathering for IP addresses, phone numbers, and usernames with a clean interface and private customization.', githubUrl: 'https://github.com/norrisfrank/GhostNorry', liveUrl: 'https://norry-ghosty.onrender.com/', screenshotUrl: 'art/Ghostnorry.png' },
+            { num: '08', title: 'FLAVORIS', type: 'food', tech: ['HTML', 'JS', 'REST'], desc: 'A recipe discovery app designed to help users find meals based on available ingredients. It uses a smart matching algorithm to suggest the best possible recipes while minimizing food waste. The UI features a clean, appetizing design with high-quality food photography.', liveUrl: 'https://norrisfrank.github.io/Flavoris-Recipe/', githubUrl: 'https://github.com/norrisfrank/Flavoris-Recipe', screenshotUrl: 'art/flavoris.png' },
+            { num: '09', title: 'EVERGREEN', type: 'realestate', tech: ['HTML', 'CSS', 'JS', 'NODE.JS', 'PGSQL'], desc: 'A sustainable real-estate platform connecting eco-conscious buyers with green-certified properties. It includes energy-efficiency ratings and local environmental impact scores for every listing. The platform aims to normalize green living through accessible data.', liveUrl: 'https://norrisfrank.github.io/EverGreen-RealEstate/', githubUrl: 'https://github.com/norrisfrank/EverGreen-RealEstate', screenshotUrl: 'art/evergreen.png' }
+        ];
+
+        const problemData = [
+            { title: 'Auth & Authorization Complexity', summary: 'JWT, middleware and roles.', detail: 'I struggled with JWT generation and expiration, middleware not attaching req.user, and protected routes still being accessible. Early on, I only checked token existence instead of proper verification, didn’t invalidate tokens on logout, and once forgot to hash passwords before storing. I now verify tokens strictly, invalidate on logout, and always hash with a strong algorithm.', solution: 'Strict JWT verification, logout invalidation, password hashing.' },
+            { title: 'Environment Vars & Render Deployment', summary: 'Production vs local.', detail: 'On Render, DATABASE_URL failed to load, CORS broke, and process.env variables were undefined. It worked locally, but production exposed hidden assumptions. I now whitelist origins explicitly, validate envs at boot, and mirror configs between environments.', solution: 'Whitelist origins, env validation, config parity.' },
+            { title: 'PostgreSQL Schema Design', summary: 'Relational modeling.', detail: 'I hit foreign key failures, insert order problems, and cascade delete ambiguity. In Chamora, contributions must link to users, users to chamas, loans to contributions. I learned to normalize properly, define clear FKs, and order inserts deterministically.', solution: 'Clear FK design, normalized schema, ordered migrations.' },
+            { title: 'Payment Logic Thinking', summary: 'Idempotency and state.', detail: 'Preventing double payment, marking statuses correctly, handling failures, and avoiding race conditions was tougher than expected. I moved to transactional DB operations and enforced idempotency on payment requests.', solution: 'Transactional ops and idempotent endpoints.' },
+            { title: 'Async/Await & Error Handling', summary: 'Unhandled rejections.', detail: 'Unhandled promise rejections and async middleware bugs cost me hours. I also returned responses twice: res.json(data) then next(). I added consistent try/catch, centralized error handling, and avoided double responses.', solution: 'Centralized error handling; single response policy.' },
+            { title: 'CORS & Frontend–Backend Integration', summary: 'Cross-origin friction.', detail: 'With frontend on Vercel and backend on Render, cookies weren’t sent and auth headers went missing. I now align origins, set proper credentials, and consistently store tokens with correct scopes.', solution: 'Aligned origins, credentials setup, token management.' },
+            { title: 'Folder Structure & Separation', summary: 'Scaling pain.', detail: 'Early projects mixed business logic inside routes, repeated DB queries, and lacked a service layer. I refactored to controllers/services/models and added input validation.', solution: 'Controllers + services + models + validation.' },
+            { title: 'State Logic Complexity (Chamora)', summary: 'Financial ledger.', detail: 'Tracking members, equal contributions, loan balances, payment transitions, and repayment logic is basically a mini financial ledger. I tightened invariants and added checks to keep balances consistent.', solution: 'Ledger invariants, validation, and audits.' },
+            { title: 'UI/UX Over-Engineering (Ghosty)', summary: 'Animation vs shipping.', detail: 'I love fluid UI, but I overspent time on animations and slowed shipping. I now cap animation work, watch performance, and prioritize delivery.', solution: 'Animation budget + performance guardrails.' },
+            { title: 'Imposter Friction', summary: 'Mindset drift.', detail: 'Sometimes I wondered if my architecture was wrong or messy. I learned to keep building, test assumptions, and iterate instead of freezing.', solution: 'Keep building; test and iterate.' },
+        ];
+        const problemAccentColors = ['#fca5a5', '#ffb366', '#93c5fd', '#86efac', '#d8b4fe', '#ffd166', '#93c5fd', '#86efac', '#fca5a5', '#ffb366'];
+        function resolveAsset(url) {
+            if (!url) return url;
+            if (/^https?:\/\//.test(url)) return url;
+            const cleaned = url.replace(/^\//, '');
+            if (location.protocol === 'file:') {
+                return '..' + '/' + cleaned;
+            }
+            return '/' + cleaned;
+        }
+        function getProblemTackleSteps(title) {
+            switch (title) {
+                case 'Auth & Authorization Complexity':
+                    return ['Strict JWT verification with exp/iat checks', 'Attach req.user via verified payload', 'Protect routes with role checks', 'Invalidate tokens on logout', 'Hash passwords with strong algorithm', 'Add auth integration tests'];
+                case 'Environment Vars & Render Deployment':
+                    return ['Whitelist frontend origins', 'Validate required env vars at boot', 'Mirror configs across environments', 'Enable credentials for CORS', 'Document deploy-time variables'];
+                case 'PostgreSQL Schema Design':
+                    return ['Normalize entities and relationships', 'Define explicit foreign keys', 'Order inserts deterministically', 'Use cascades carefully', 'Add migration review gates'];
+                case 'Payment Logic Thinking':
+                    return ['Use transactional DB operations', 'Add idempotency keys to requests', 'Mark statuses atomically', 'Retry with backoff on transient failures', 'Audit all state transitions'];
+                case 'Async/Await & Error Handling':
+                    return ['Centralize error handling middleware', 'Avoid double responses', 'Wrap async ops in try/catch', 'Handle unhandled rejections', 'Add deterministic tests'];
+                case 'CORS & Frontend–Backend Integration':
+                    return ['Align API and frontend origins', 'Enable credentials where needed', 'Send correct auth headers', 'Store tokens safely', 'Test cross-origin flows'];
+                case 'Folder Structure & Separation':
+                    return ['Move logic to services', 'Keep controllers thin', 'Deduplicate DB queries', 'Add validation layer', 'Introduce consistent module boundaries'];
+                case 'State Logic Complexity (Chamora)':
+                    return ['Define ledger invariants', 'Validate contribution/loan edges', 'Compute balances deterministically', 'Add audits and reconciliation', 'Simulate edge cases'];
+                case 'UI/UX Over-Engineering (Ghosty)':
+                    return ['Set animation budget', 'Profile performance', 'Favor simpler layouts', 'Ship iteratively', 'Trim nonessential effects'];
+                case 'Imposter Friction':
+                    return ['Write, test, iterate', 'Request feedback early', 'Document decisions', 'Refactor deliberately', 'Measure progress over perfection'];
+                default:
+                    return ['Analyze root cause', 'Plan fixes', 'Implement safely', 'Verify behavior', 'Document learnings'];
+            }
+        }
+        function getProblemTools(title) {
+            switch (title) {
+                case 'Auth & Authorization Complexity':
+                    return ['express-jwt / jsonwebtoken', 'bcrypt for hashing', 'RBAC middleware', 'Integration tests for protected routes'];
+                case 'Environment Vars & Render Deployment':
+                    return ['Render environment dashboard', 'CORS config with credentials', 'dotenv locally + env validation at boot'];
+                case 'PostgreSQL Schema Design':
+                    return ['pg + migration tool', 'FK constraints and indexes', 'Transaction wrappers for ordered inserts'];
+                case 'Payment Logic Thinking':
+                    return ['Idempotency keys', 'Transactional queries', 'Retry/backoff policy', 'Status enums'];
+                case 'Async/Await & Error Handling':
+                    return ['Central error handler', 'Promise rejection tracking', 'Async wrapper utilities'];
+                case 'CORS & Frontend–Backend Integration':
+                    return ['Allowed origins list', 'Credentials: true', 'Auth headers standardization'];
+                case 'Folder Structure & Separation':
+                    return ['Controllers / Services / Models', 'Validation layer (zod/joi)', 'Repository pattern for DB'];
+                case 'State Logic Complexity (Chamora)':
+                    return ['Ledger invariants doc', 'Reconciliation scripts', 'Audit tables'];
+                case 'UI/UX Over-Engineering (Ghosty)':
+                    return ['Performance profiler', 'Animation budget checklist', 'Simplified layout components'];
+                case 'Imposter Friction':
+                    return ['Architecture notes', 'Refactor backlog', 'Review cadence'];
+                default:
+                    return ['Config docs', 'Issue tracker', 'Test suite'];
+            }
+        }
+
+        function buildProblemsGrid() {
+            const grid = document.getElementById('problems-grid');
+            if (!grid) return;
+            const brClasses = ['c-red-br', 'c-orange-br', 'c-blue-br', 'c-green-br', 'c-purple-br', 'c-white-br', 'c-blue-br', 'c-green-br', 'c-purple-br', 'c-white-br', 'c-blue-br', 'c-green-br'];
+            const colors = ['#fca5a5', '#ffb366', '#93c5fd', '#86efac', '#d8b4fe', '#ffd166', '#93c5fd', '#86efac', '#d8b4fe', '#ffd166', '#93c5fd', '#86efac'];
+            grid.innerHTML = '';
+            problemData.forEach((p, i) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'pcard-wrap reveal';
+                wrap.onclick = () => openProblemDetail(i);
+                const outer = document.createElement('div');
+                outer.className = `pcard-outer ${brClasses[i % brClasses.length]}`;
+                const inner = document.createElement('div');
+                inner.className = 'pcard-inner c-white';
+                inner.style.alignItems = 'flex-start';
+                inner.style.background = colors[i % colors.length];
+                inner.innerHTML = `
+                    <div class="art-title" style="font-family:'Press Start 2P', monospace; font-size:11px; color:#000; margin-bottom:8px;">${p.title}</div>
+                    <div style="font-size:12px; color:#111; line-height:1.7; font-weight:600;">${p.summary}</div>
+                `;
+                outer.appendChild(inner);
+                wrap.appendChild(outer);
+                grid.appendChild(wrap);
+                if (window.revealObserver && window.revealObserver.observe) {
+                    window.revealObserver.observe(wrap);
+                } else {
+                    wrap.classList.add('visible');
+                }
+            });
+        }
+
+        const accentColors = ['c-orange', 'c-blue', 'c-green', 'c-white', 'c-red', 'c-purple'];
+        function getAccentHex(c) { return { 'c-orange': '#e8600a', 'c-blue': '#93c5fd', 'c-green': '#86efac', 'c-white': '#fff', 'c-red': '#fca5a5', 'c-purple': '#d8b4fe' }[c] || '#e8600a'; }
+
+        // --- PIXEL MOCKUP ---
+        function pixelMockup(type) {
+            const col = { finance: '#991b1b', cargo: '#1e40af', osint: '#166534', crm: '#7c3aed', travel: '#e8600a', chatbot: '#fff', food: '#86efac', realestate: '#93c5fd' }[type] || '#333';
+            return `<div class="proj-mockup"><svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated"><rect x="5" y="5" width="150" height="100" fill="#0d1117" rx="4" stroke="${col}" stroke-width="3" /><rect x="5" y="5" width="150" height="16" fill="${col}" rx="2" /><rect x="10" y="9" width="18" height="6" fill="#fff" opacity="0.3" rx="1" /><rect x="10" y="26" width="90" height="30" fill="${col}" opacity="0.15" rx="2" /><text x="80" y="108" font-size="5" fill="${col}" opacity="0.5" text-anchor="middle" font-family="monospace">LIVE SITE COMING SOON</text></svg></div>`;
+        }
+        function getTypeAccentHex(type) {
+            const map = { finance: '#fca5a5', cargo: '#93c5fd', osint: '#86efac', crm: '#d8b4fe', travel: '#e8600a', chatbot: '#93c5fd', food: '#86efac', realestate: '#93c5fd' };
+            return map[type] || '#93c5fd';
+        }
+        function getArtAccentHexByTags(tags) {
+            const t = Array.isArray(tags) ? tags.join(' ') : '';
+            if (/WILDLIFE/i.test(t)) return '#86efac';
+            if (/ANIME|COMICS|MARVEL|NARUTO/i.test(t)) return '#d8b4fe';
+            if (/PORTRAIT|AFRICA|CULTURE/i.test(t)) return '#e8600a';
+            if (/ABSTRACT/i.test(t)) return '#ffd166';
+            if (/MECHANICAL|INK|POWER|REALISM/i.test(t)) return '#93c5fd';
+            return '#93c5fd';
+        }
+
+        // --- SKILLS DATA + GRID BUILD ---
+        const skillsData = [
+            {
+                title: 'BACKEND',
+                sub: 'Scalable server architecture & database management.',
+                items: ['Node.js', 'Express', 'JWT', 'PostgreSQL'],
+                projects: ['Financial Ledger API', 'Cargo Tracking Hub', 'CRM Core'],
+                color: '#e8600a'
+            },
+            {
+                title: 'FRONTEND',
+                sub: 'Intuitive UI/UX with modern frameworks.',
+                items: ['React', 'Tailwind', 'Framer Motion'],
+                projects: ['Travel Booking Portal', 'OSINT Dashboard', 'Real Estate UI'],
+                color: '#93c5fd'
+            },
+            {
+                title: 'DEVOPS',
+                sub: 'Robust CI/CD pipelines & cloud infrastructure.',
+                items: ['Docker', 'GitHub Actions', 'Render', 'AWS'],
+                projects: ['Deployment Monitor', 'Portfolio CI/CD', 'Automated QA Bot'],
+                color: '#86efac'
+            },
+            {
+                title: 'CONCEPTS',
+                sub: 'Clean architecture & system design patterns.',
+                items: ['RESTful APIs', 'MVC', 'Auth Flows', 'OOP'],
+                projects: ['Core System Refactor', 'SaaS Architecture', 'Module Bridge'],
+                color: '#d8b4fe'
+            },
+            {
+                title: 'SECURITY',
+                sub: 'Hardened systems & data protection.',
+                items: ['Validation', 'Rate Limiting', 'RBAC', 'Encryption'],
+                projects: ['Auth Guard System', 'Secure Payment Flow', 'Audit Logger'],
+                color: '#fca5a5'
+            },
+            {
+                title: 'TESTING',
+                sub: 'Ensuring stability through rigorous validation.',
+                items: ['Unit', 'Integration', 'Mocks', 'CI Gates'],
+                projects: ['QA Engine', 'Legacy System Tests', 'Coverage Reporter'],
+                color: '#ffd166'
+            },
+            {
+                title: 'PERFORMANCE',
+                sub: 'Optimizing for speed & resource efficiency.',
+                items: ['Caching', 'Profiling', 'Async Rendering', 'Indexing'],
+                projects: ['High-Traffic API Fix', 'Real Estate Search Opt', 'Data Fetcher'],
+                color: '#93c5fd'
+            },
+            {
+                title: 'DATA TOOLS',
+                sub: 'Efficient data lifecycle & migrations.',
+                items: ['SQL', 'Migrations', 'Seeds', 'ETL'],
+                projects: ['E-commerce Migration', 'User Analytics Pipeline', 'Legacy Sync'],
+                color: '#86efac'
+            },
+        ];
+        function buildSkillsGrid() {
+            const grid = document.getElementById('skills-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            skillsData.forEach((s, i) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'pcard-wrap reveal';
+                wrap.style.setProperty('--stagger', `${(i + 1) * 0.1}s`);
+                wrap.onclick = () => openSkillsDetail(i);
+
+                const idNum = (i + 1).toString().padStart(3, '0');
+
+                wrap.innerHTML = `
+                <div class="pcard-outer" style="border: 2px solid #222; background: #0a0a0a;">
+                    <div class="pcard-inner" style="padding: 22px; display: flex; flex-direction: column; align-items: flex-start; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
+                        <div style="display:flex; width:100%; justify-content:space-between; margin-bottom:12px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">
+                            <span style="font-family:'Space Mono', monospace; font-size:9px; color:${s.color}; font-weight:bold;">MODULE: SKL_0${idNum}</span>
+                            <span style="font-family:'Space Mono', monospace; font-size:9px; color:#555;">[ ACTIVE ]</span>
+                        </div>
+                        <h3 style="font-family:'Press Start 2P', monospace; font-size:10px; color:#e6edf3; margin-bottom:14px; line-height:1.6; letter-spacing:0.5px;">${s.title}</h3>
+                        <p style="font-family:'Space Mono', monospace; font-size:11px; color:#8b949e; line-height:1.7; margin-bottom:12px; flex:1;">${s.sub}</p>
+                        <div style="font-family:'Space Mono', monospace; font-size:9px; color:#555; margin-bottom:12px; border-top:1px solid #222; padding-top:8px; width:100%;">
+                            IMPLEMENTED IN: <span style="color:#e2e8f0;">${s.projects[0]} & more</span>
+                        </div>
+                        <div style="display:flex; gap:8px; margin-top: auto; flex-wrap: wrap;">
+                            ${s.items.slice(0, 3).map(item => `
+                                <span style="font-family:'Space Mono', monospace; font-size:8px; background:${s.color}22; color:${s.color}; padding:3px 6px; border:1px solid ${s.color}44;">${item}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+                grid.appendChild(wrap);
+                if (window.revealObserver) window.revealObserver.observe(wrap);
+            });
+        }
+        function openSkillsDetail(i) {
+            const s = skillsData[i];
+            if (!s) return;
+            const idNum = (i + 1).toString().padStart(3, '0');
+            document.getElementById('sd-num').textContent = `// SKILL_LOG: SKL_0${idNum}`;
+            document.getElementById('sd-title').textContent = s.title;
+            document.getElementById('sd-sub').textContent = s.sub;
+            document.getElementById('sd-desc').textContent = 'Documentation of technical competency and production implementation standards.';
+            document.getElementById('sd-sections').innerHTML = `
+                <div style="margin-bottom:24px;">
+                    <div style="color:#63b3ed; font-size:10px; margin-bottom:12px; font-family:'Press Start 2P', monospace;">[ TECHNOLOGIES ]</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                        ${s.items.map(t => `<span class="badge" style="border-color:${s.color}66; color:${s.color}; background:rgba(255,255,255,0.05); padding:6px 10px; font-family:'Space Mono', monospace;">${t}</span>`).join('')}
+                    </div>
+                </div>
+                <div style="margin-bottom:24px;">
+                    <div style="color:#63b3ed; font-size:10px; margin-bottom:12px; font-family:'Press Start 2P', monospace;">[ IMPLEMENTED_IN_PROJECTS ]</div>
+                    <ul style="color:#e6edf3; line-height:2.0; font-family:'Space Mono', monospace; list-style-type: '→ '; padding-left:20px;">
+                        ${s.projects.map(p => `<li>${p}</li>`).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <div style="color:#63b3ed; font-size:10px; margin-bottom:12px; font-family:'Press Start 2P', monospace;">[ DEPLOYMENT_NOTES ]</div>
+                    <p style="color:#8b949e; line-height:1.8; font-family:'Space Mono', monospace;">${s.sub} Active production implementation focused on reliability and scalable patterns.</p>
+                </div>
+            `;
+            const sd = document.getElementById('skills-detail');
+            sd.style.display = 'flex';
+            sd.classList.add('lb-open');
+            document.body.style.overflow = 'hidden';
+            window.lastProjectAccentHex = s.color;
+        }
+        function closeSkillsDetail() {
+            const sd = document.getElementById('skills-detail');
+            sd.style.display = 'none';
+            sd.classList.remove('lb-open');
+            document.body.style.overflow = '';
+        }
+        function skillsDetailClickOutside(e) { if (e.target.id === 'skills-detail') closeSkillsDetail(); }
+
+        // --- CORE FUNCTIONS ---
+        function showView(name) {
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('art-view').classList.remove('active');
+            document.getElementById('hire-view').classList.remove('active');
+            window.scrollTo(0, 0);
+            ['art-lightbox', 'proj-lightbox', 'commission-modal', 'price-lightbox', 'proj-detail'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.display = 'none';
+                    el.classList.remove('lb-open', 'cm-open');
+                }
+            });
+            document.body.style.overflow = '';
+            if (name === 'art') {
+                document.getElementById('art-view').classList.add('active');
+                buildArtGrid();
+                buildViewIcons('art-bg-icons');
+            }
+            else if (name === 'hire') {
+                document.getElementById('hire-view').classList.add('active');
+                buildHireProjectsGrid();
+                buildViewIcons('hire-bg-icons');
+            }
+            else { document.getElementById('main-view').style.display = 'block'; }
+        }
+
+        function buildHireProjectsGrid() {
+            const grid = document.getElementById('hire-projects-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const brClasses = ['c-blue-br', 'c-blue-br', 'c-green-br', 'c-purple-br', 'c-orange-br', 'c-red-br', 'c-white-br', 'c-green-br', 'c-blue-br'];
+
+            projectData.forEach((p, i) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'pcard-wrap';
+                wrap.style.setProperty('--stagger', `${(i + 1) * 0.1}s`);
+                wrap.onclick = (e) => flipProjectCard(e, i);
+
+                const brClass = brClasses[i % brClasses.length];
+                const innerClass = p.type === 'osint' || p.type === 'finance' || p.type === 'fullstack' ? 'c-green' : 'c-white';
+                const accentHex = getTypeAccentHex(p.type);
+
+                const techBadges = (p.tech || []).map(t => `<span class="badge">${t}</span>`).join('');
+                const screenshotSrc = p.screenshotUrl ? resolveAsset(p.screenshotUrl) : null;
+
+                wrap.innerHTML = `
+                    <div class="pcard-outer ${brClass}">
+                        <div class="pcard-inner ${innerClass} hire-proj" style="${p.type === 'osint' || p.type === 'finance' ? `background:${accentHex};` : ''}">
+                            <div class="art-img-container">
+                                <div class="art-img" style="aspect-ratio:1.6/1; background:#eee; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                                    ${screenshotSrc ? `<img src="${screenshotSrc}" alt="${p.title}" style="width:100%; height:100%; object-fit:cover; display:block;">` : `<span class="icon-float" style="font-size:24px;">📁</span>`}
+                                </div>
+                            </div>
+                            <div class="proj-label">${(p.type || 'PROJECT').toUpperCase()}</div>
+                            <h3 class="proj-name">${p.title}</h3>
+                            <p class="proj-desc">${p.desc ? p.desc.substring(0, 80) + '...' : ''}</p>
+                            <div class="tech-badges">
+                                ${techBadges}
+                            </div>
+                            <div class="proj-accent" style="background:${accentHex};"></div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(wrap);
+                if (window.revealObserver) window.revealObserver.observe(wrap);
+            });
+        }
+
+        // --- ART GRID ---
+        function buildArtGrid() {
+            const grid = document.getElementById('art-grid');
+            if (!grid) return;
+
+            // Commission Card - Bottom Center
+            const commissionCard = `
+            <div style="grid-column: 1 / -1; display:flex; justify-content:center; margin-top: 60px; margin-bottom: 40px;">
+                <div class="pcard-wrap art-card-wrap commission-card-wrap reveal" onclick="openCommission()" style="--stagger: 0.2s; width: 320px;">
+                    <div class="pcard-outer c-orange-br">
+                        <div class="pcard-inner c-orange" style="cursor:pointer; padding: 25px; min-height: 280px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                            <div class="art-img-container" style="background:#fff; border:4px solid #000; padding:10px; margin-bottom:15px; width: 100%; display:flex; align-items:center; justify-content:center; font-size:60px;">🎨</div>
+                            <div class="art-title" style="font-family:'Press Start 2P', monospace; font-size:12px; color:#000; margin-bottom:10px; font-weight:bold; text-align:center;">COMMISSION ME</div>
+                            <div class="art-desc-short" style="font-size:11px; color:#000; line-height:1.4; text-align:center; font-weight:bold;">CUSTOM ORIGINAL ART</div>
+                            <div style="background:#000; height:8px; width: 60%; margin-top:15px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+            // Map standard pieces
+            const pieces = artPieces.map((p, idx) => {
+                const accent = accentColors[idx % accentColors.length];
+                const delay = (idx % 4) * 0.1;
+                return `
+                <div class="pcard-wrap art-card-wrap reveal" onclick="openLightbox(${idx})" style="--stagger: ${delay}s">
+                    <div class="pcard-outer ${accent}-br">
+                        <div class="pcard-inner c-white" style="cursor:pointer; padding: 15px;">
+                            <div class="art-img-container" style="background:#fff; border:4px solid #000; padding:6px; margin-bottom:12px; position:relative;">
+                                <div class="art-num" style="position:absolute; top:8px; left:8px; font-family:'Press Start 2P', monospace; font-size:7px; color:#000; background: #fff; padding: 2px; border:2px solid #000;">#${p.num}</div>
+                                <div class="art-img" style="aspect-ratio: 1/1; overflow:hidden; background:#eee; display:flex; align-items:center; justify-content:center;">
+                                    ${p.img ? `<img src="${encodeURI(resolveAsset(p.img))}" alt="${p.title}" style="width:100%; height:100%; object-fit:cover;">` : `<div class="art-img-placeholder">COMING SOON</div>`}
+                                </div>
+                            </div>
+                            <div class="art-title" style="font-family:'Press Start 2P', monospace; font-size:9px; color:#000; margin-bottom:8px; font-weight:bold;">${p.title}</div>
+                            <div class="art-desc-short" style="font-size:10px; color:#111; line-height:1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 1.4em; min-height: 2.8em;">
+                                ${p.desc || 'Hand-drawn original piece.'}
+                            </div>
+                            <div style="background:#000; height:6px; margin-top:12px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);"></div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            pieces.push(commissionCard);
+            grid.innerHTML = pieces.join('');
+
+            // Re-trigger reveal animation for dynamic content
+            if (window.revealObserver) {
+                grid.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
+            }
+        }
+
+
+        function getProblemTackleSteps(title) {
+            if (title.includes('Auth')) return ['JWT Setup', 'Middleware Integration', 'Secret Management', 'Route Protection'];
+            if (title.includes('Environment')) return ['Variable Whitelisting', 'CORS Config', 'Deployment Parity Check'];
+            if (title.includes('PostgreSQL')) return ['Normalization', 'FK Constraints', 'Migration Versioning'];
+            if (title.includes('Payment')) return ['Transaction Safety', 'Idempotency Keys', 'Status Mapping'];
+            if (title.includes('Async')) return ['Try/Catch wrappers', 'Centralized Error Handler', 'Response Guards'];
+            if (title.includes('CORS')) return ['Origin Alignment', 'Credential Handling', 'Header Whitelisting'];
+            if (title.includes('Folder')) return ['Layered Architecture', 'Logic Separation', 'Boundary Enforcement'];
+            if (title.includes('State')) return ['Invariant Checks', 'State Transitions', 'Audit Logs'];
+            return ['Diagnosis', 'Isolation', 'Solution Implementation', 'Verification'];
+        }
+
+        function getProblemTools(title) {
+            if (title.includes('Auth')) return ['Node.js', 'jsonwebtoken', 'bcryptjs'];
+            if (title.includes('Environment')) return ['Render', 'dotenv', 'CORS middleware'];
+            if (title.includes('PostgreSQL')) return ['Prisma / Sequelize', 'pgAdmin', 'SQL'];
+            if (title.includes('Payment')) return ['Stripe API', 'M-Pesa API', 'Idempotency-Key'];
+            if (title.includes('Async')) return ['Express Error Middleware', 'Promises'];
+            if (title.includes('CORS')) return ['HTTP Headers', 'Preflight requests'];
+            if (title.includes('Folder')) return ['MVC Pattern', 'Design Patterns'];
+            return ['Standard Stack'];
+        }
+
+        function buildProblemsGrid() {
+            const grid = document.getElementById('problems-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            problemData.forEach((p, i) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'pcard-wrap reveal';
+                wrap.style.setProperty('--stagger', `${(i + 1) * 0.1}s`);
+                wrap.onclick = () => openProblemDetail(i);
+
+                const accent = problemAccentColors[i % problemAccentColors.length];
+                const idNum = (i + 1).toString().padStart(3, '0');
+
+                wrap.innerHTML = `
+                <div class="pcard-outer" style="border: 2px solid #222; background: #0a0a0a;">
+                    <div class="pcard-inner" style="padding: 22px; display: flex; flex-direction: column; align-items: flex-start; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
+                        <div style="display:flex; width:100%; justify-content:space-between; margin-bottom:12px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">
+                            <span style="font-family:'Space Mono', monospace; font-size:9px; color:${accent}; font-weight:bold;">ID: ERR_LOG_${idNum}</span>
+                            <span style="font-family:'Space Mono', monospace; font-size:9px; color:#555;">[ RESOLVED ]</span>
+                        </div>
+                        <h3 style="font-family:'Press Start 2P', monospace; font-size:10px; color:#e6edf3; margin-bottom:14px; line-height:1.6; letter-spacing:0.5px;">${p.title}</h3>
+                        <p style="font-family:'Space Mono', monospace; font-size:11px; color:#8b949e; line-height:1.7; margin-bottom:18px; flex:1;">${p.summary}</p>
+                        <div style="display:flex; gap:10px; margin-top: auto;">
+                            <span style="font-family:'Space Mono', monospace; font-size:8px; background:${accent}22; color:${accent}; padding:4px 8px; border:1px solid ${accent}44;">STABILITY</span>
+                            <span style="font-family:'Space Mono', monospace; font-size:8px; background:#23863622; color:#238636; padding:4px 8px; border:1px solid #23863644;">CORE_FIX</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+                grid.appendChild(wrap);
+                if (window.revealObserver) window.revealObserver.observe(wrap);
+            });
+        }
+
+        function buildViewIcons(id) {
+            const container = document.getElementById(id);
+            if (!container) return;
+            container.innerHTML = '';
+            const icons = ['0', '1', '•'];
+            for (let i = 0; i < 26; i++) {
+                const el = document.createElement('div');
+                el.className = 'view-bg-icon';
+                el.textContent = icons[Math.floor(Math.random() * icons.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDelay = (Math.random() * 12) + 's';
+                el.style.fontSize = (Math.random() * 10 + 10) + 'px';
+                container.appendChild(el);
+            }
+        }
+
+        function openProblemDetail(i) {
+            const p = problemData[i];
+            if (!p) return;
+            const lb = document.getElementById('proj-lightbox');
+            document.getElementById('plb-num').textContent = `// PROBLEM`;
+            document.getElementById('plb-title').textContent = p.title;
+            document.getElementById('plb-category').textContent = 'ENGINEERING';
+            document.getElementById('plb-desc').textContent = p.detail;
+            document.getElementById('plb-tags').innerHTML = ['ISSUE', 'FIX', 'BEST PRACTICE'].map(t => `<span class="badge">${t}</span>`).join('');
+            const accent = problemAccentColors[i % problemAccentColors.length];
+            const steps = getProblemTackleSteps(p.title);
+            document.getElementById('plb-img-wrap').innerHTML = `
+                <div style="width:100%; background: linear-gradient(160deg, #0a0a1a 0%, #0d1b2a 60%, #112240 100%); border: 4px solid #000; box-shadow: 8px 8px 0 #000; padding: 18px;">
+                    <div style="font-family:'Press Start 2P', monospace; font-size:11px; color:#e2e8f0; margin-bottom:10px;">HOW I TACKLED IT</div>
+                    <div style="font-family:'Space Mono', monospace; font-size:12px; color:#cdd5e0; line-height:1.9; margin-bottom:10px;">${p.detail}</div>
+                    <div style="font-family:'Press Start 2P', monospace; font-size:9px; color:#e2e8f0; margin-bottom:6px;">STEPS</div>
+                    <ul style="font-family:'Space Mono', monospace; font-size:12px; color:#cdd5e0; line-height:2; padding-left:16px;">${steps.map(s => `<li>${s}</li>`).join('')}</ul>
+                    <div style="font-family:'Press Start 2P', monospace; font-size:9px; color:#e2e8f0; margin:12px 0 6px;">KEY PRACTICES</div>
+                    <div style="font-family:'Space Mono', monospace; font-size:12px; color:#cdd5e0; line-height:1.9;">${p.solution}</div>
+                    <div style="font-family:'Press Start 2P', monospace; font-size:9px; color:#e2e8f0; margin:12px 0 6px;">TOOLS / CONFIGS</div>
+                    <ul style="font-family:'Space Mono', monospace; font-size:12px; color:#cdd5e0; line-height:2; padding-left:16px;">${getProblemTools(p.title).map(t => `<li>${t}</li>`).join('')}</ul>
+                </div>
+            `;
+            const ghBtn = document.getElementById('plb-gh-link');
+            const liveBtn = document.getElementById('plb-live-link');
+            if (ghBtn) ghBtn.style.display = 'none';
+            if (liveBtn) liveBtn.style.display = 'none';
+
+            lb.classList.add('lb-open');
+            lb.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // --- LIGHTBOXES ---
+        let currentArtIndex = 0;
+        function openLightbox(i) {
+            currentArtIndex = i;
+            updateArtLightbox();
+            const lb = document.getElementById('art-lightbox');
+            lb.style.display = 'flex';
+            lb.classList.add('lb-open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox() {
+            const lb = document.getElementById('art-lightbox');
+            lb.style.display = 'none';
+            lb.classList.remove('lb-open');
+            document.body.style.overflow = '';
+        }
+        function lbClickOutside(e) { if (e.target.id === 'art-lightbox') closeLightbox(); }
+        function lbNav(direction) {
+            currentArtIndex = (currentArtIndex + direction + artPieces.length) % artPieces.length;
+            updateArtLightbox();
+        }
+        function updateArtLightbox() {
+            const p = artPieces[currentArtIndex];
+            if (!p) return;
+            document.getElementById('lb-num').textContent = `// PIECE ${p.num}`;
+            document.getElementById('lb-title').textContent = p.title;
+            document.getElementById('lb-desc-full').textContent = (p.desc || 'No description available.') + (p.medium ? ` | ${p.medium}` : '');
+            const imgBox = document.getElementById('lb-img-wrap');
+            if (imgBox) {
+                const src = p.img ? resolveAsset(p.img) : null;
+                imgBox.innerHTML = '';
+                if (src) {
+                    const image = document.createElement('img');
+                    image.src = src;
+                    image.alt = p.title || 'Artwork';
+                    imgBox.appendChild(image);
+                } else {
+                    imgBox.textContent = 'COMING SOON';
+                }
+                const credit = document.createElement('div');
+                credit.className = 'lb-credit';
+                credit.style.fontSize = '8px';
+                credit.style.color = '#aaa';
+                credit.style.marginTop = '10px';
+                credit.style.fontFamily = "'Space Mono', monospace";
+                credit.style.textTransform = 'uppercase';
+                credit.textContent = 'created by Norris Frank Meyo';
+                imgBox.appendChild(credit);
+            }
+            window.lastArtAccentHex = getArtAccentHexByTags(p.tags || []);
+        }
+
+        let currentProjectIndex = 0;
+        function openProjectLightbox(i) {
+            currentProjectIndex = i;
+            updateProjectLightbox();
+            document.getElementById('proj-lightbox').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.getElementById('proj-lightbox').classList.add('lb-open');
+            const gh = document.getElementById('plb-gh-link');
+            const see = document.getElementById('plb-see-link');
+            if (gh) gh.style.display = 'inline-block';
+            if (see) see.style.display = 'inline-block';
+            const p = projectData[currentProjectIndex];
+            window.lastProjectAccentHex = getTypeAccentHex(p.type);
+        }
+        function closeProjectLightbox() {
+            document.getElementById('proj-lightbox').style.display = 'none';
+            document.body.style.overflow = '';
+            document.getElementById('proj-lightbox').classList.remove('lb-open');
+        }
+        function projLbClickOutside(e) { if (e.target.id === 'proj-lightbox') closeProjectLightbox(); }
+        function projLbNav(direction) {
+            currentProjectIndex = (currentProjectIndex + direction + projectData.length) % projectData.length;
+            updateProjectLightbox();
+        }
+        function updateProjectLightbox() {
+            const p = projectData[currentProjectIndex];
+            if (!p) return;
+            const numEl = document.getElementById('plb-num') || document.getElementById('proj-lb-num');
+            const titleEl = document.getElementById('plb-title') || document.getElementById('proj-lb-title');
+            const descEl = document.getElementById('plb-desc') || document.getElementById('proj-lb-desc');
+            const tagsEl = document.getElementById('plb-tags') || document.getElementById('proj-lb-tags');
+            const imgEl = document.getElementById('plb-img-wrap') || document.getElementById('proj-lb-img-wrap');
+            const ghEl = document.getElementById('plb-gh-link');
+            const liveEl = document.getElementById('plb-live-link');
+
+            if (numEl) numEl.textContent = `// PROJECT ${p.num || (currentProjectIndex + 1)}`;
+            if (titleEl) titleEl.textContent = p.title;
+            if (descEl) descEl.textContent = p.desc;
+            if (tagsEl) {
+                const techArr = Array.isArray(p.tech) ? p.tech : (p.tech ? p.tech.split(' · ') : []);
+                tagsEl.innerHTML = techArr.map(t => `<span class="badge lb-tag">${t}</span>`).join('');
+            }
+            if (imgEl) {
+                const screenshotSrc = p.screenshotUrl ? resolveAsset(p.screenshotUrl) : null;
+                imgEl.innerHTML = '';
+                if (screenshotSrc) {
+                    const image = document.createElement('img');
+                    image.src = screenshotSrc;
+                    image.alt = p.title || 'Project screenshot';
+                    image.onerror = () => {
+                        imgEl.innerHTML = pixelMockup(p.type);
+                    };
+                    imgEl.appendChild(image);
+                } else {
+                    imgEl.innerHTML = pixelMockup(p.type);
+                }
+                const credit = document.createElement('div');
+                credit.className = 'lb-credit';
+                credit.style.fontSize = '8px';
+                credit.style.color = '#aaa';
+                credit.style.marginTop = '15px';
+                credit.style.fontFamily = "'Space Mono', monospace";
+                credit.style.textTransform = 'uppercase';
+                credit.textContent = 'created by Norris Frank Meyo';
+                imgEl.appendChild(credit);
+            }
+            if (ghEl) {
+                if (p.githubUrl) { ghEl.href = p.githubUrl; ghEl.style.display = 'inline-block'; }
+                else { ghEl.style.display = 'none'; }
+            }
+            if (liveEl) {
+                if (p.liveUrl) { liveEl.href = p.liveUrl; liveEl.style.display = 'inline-block'; }
+                else { liveEl.style.display = 'none'; }
+            }
+        }
+
+        function flipProjectCard(e, i) {
+            e = e || window.event;
+            if (e.preventDefault) e.preventDefault();
+            if (e.stopPropagation) e.stopPropagation();
+            const wrap = e.currentTarget || this;
+            const card = wrap ? wrap.querySelector('.pcard-inner') : null;
+            if (card) {
+                card.classList.add('flip');
+                setTimeout(() => {
+                    card.classList.remove('flip');
+                    openProjectLightbox(i);
+                }, 300);
+            } else {
+                openProjectLightbox(i);
+            }
+        }
+
+        function openProjectDetail() {
+            const p = projectData[currentProjectIndex];
+            if (!p) return;
+            // Close the project lightbox to auto-switch into detail view
+            closeProjectLightbox();
+            document.getElementById('pd-num').textContent = `// PROJECT ${p.num || (currentProjectIndex + 1)}`;
+            document.getElementById('pd-title').textContent = p.title;
+            document.getElementById('pd-medium').textContent = (p.type || '').toUpperCase();
+            const techArr = Array.isArray(p.tech) ? p.tech : (p.tech ? p.tech.split(' · ') : []);
+            document.getElementById('pd-tags').innerHTML = techArr.map(t => `<span class="badge">${t}</span>`).join('');
+            document.getElementById('pd-desc').textContent = p.desc || '';
+            document.getElementById('pd-sections').innerHTML = `
+                <div style="margin-bottom:16px;"><strong>More Info:</strong><br>${p.desc || 'Details available on request.'}</div>
+                <div style="margin-bottom:16px;"><strong>Technologies Used:</strong><br>${techArr.join(', ')}</div>
+                <div style="margin-bottom:16px;"><strong>Files & Structure:</strong><br>src/, routes/, controllers/, models/, services/, public/</div>
+                <div style="margin-bottom:16px;"><strong>How It Works:</strong><br>Requests pass through controllers → services → data layer. Auth is handled via JWT, with role checks on protected endpoints.</div>
+                <div style="margin-bottom:16px;"><strong>Hiccups & Solutions:</strong><br>Rate limits, deployment configs, DB migrations. Fixed with retries, health checks, migrations versioning and environment parity.</div>
+                <div style="margin-bottom:16px;"><strong>Why These Technologies:</strong><br>Stability, ecosystem maturity, and deployment simplicity for the stack.</div>
+                <div style="margin-bottom:16px;"><strong>Command Flow:</strong><br>install → build → test → deploy. CI hooks ensure lint/test gates pass before releases.</div>
+                <div style="margin-top:10px;">
+                    <a href="#" target="_blank" class="lb-gh-link" style="margin-right:8px;">REPOSITORY →</a>
+                    <a href="javascript:void(0)" class="lb-gh-link" onclick="closeProjectDetail()">CLOSE</a>
+                </div>
+            `;
+            const d = document.getElementById('proj-detail');
+            d.style.display = 'flex';
+            d.classList.add('lb-open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeProjectDetail() {
+            const d = document.getElementById('proj-detail');
+            d.style.display = 'none';
+            d.classList.remove('lb-open');
+            document.body.style.overflow = '';
+        }
+        function projDetailClickOutside(e) { if (e.target.id === 'proj-detail') closeProjectDetail(); }
+
+        // --- COMMISSION MODAL ---
+        function openCommission() {
+            const el = document.getElementById('commission-modal');
+            if (!el) return;
+            const accent = window.lastArtAccentHex || '#93c5fd';
+            const outer = document.getElementById('cm-outer-card');
+            const inner = document.getElementById('cm-inner-card');
+            const footOuter = document.getElementById('cm-footer-outer');
+            const footInner = document.getElementById('cm-footer-inner');
+            if (outer) outer.style.background = accent;
+            if (inner) inner.style.background = accent;
+            if (footOuter) footOuter.style.background = accent;
+            if (footInner) footInner.style.background = '#fff';
+            el.classList.add('cm-open');
+            el.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeCommission() {
+            const el = document.getElementById('commission-modal');
+            if (!el) return;
+            el.classList.remove('cm-open');
+            el.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        function cmClickOutside(e) { if (e.target.id === 'commission-modal') closeCommission(); }
+
+        // --- FORM LOGIC ---
+        function applyCoupon() {
+            const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+            const msg = document.getElementById('coupon-msg');
+            if (code === 'NORRIS10') { msg.textContent = 'Code applied: 10% off!'; msg.style.color = 'var(--orange)'; }
+            else { msg.textContent = 'Invalid code.'; msg.style.color = 'red'; }
+        }
+        function switchPayTab(t) {
+            document.querySelectorAll('.pay-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.pay-form').forEach(f => f.style.display = 'none');
+            event.target.classList.add('active');
+            document.getElementById(`pay-${t}-form`).style.display = 'flex';
+        }
+        function submitCard() {
+            const s = document.getElementById('card-status');
+            s.textContent = '// Processing payment...'; s.className = 'pay-status';
+            setTimeout(() => { s.textContent = '✓ Payment sent for verification!'; }, 1500);
+        }
+        function requestStk() {
+            const s = document.getElementById('mpesa-status');
+            s.textContent = '// Sending STK push...'; s.className = 'pay-status';
+            setTimeout(() => { s.textContent = '✓ STK sent! Confirm on your phone.'; }, 1500);
+        }
+
+        // --- TYPING EFFECT ---
+        const phrases = ['BACKEND ENGINEER', 'API ARCHITECT', 'SYSTEMS DESIGNER'];
+        let phIdx = 0, chIdx = 0, isDeleting = false;
+        function typeEffect() {
+            const el = document.getElementById('type-output');
+            if (!el) return;
+            const current = phrases[phIdx];
+            if (isDeleting) { el.textContent = current.substring(0, chIdx--); }
+            else { el.textContent = current.substring(0, chIdx++); }
+            if (!isDeleting && chIdx > current.length) { isDeleting = true; setTimeout(typeEffect, 1500); }
+            else if (isDeleting && chIdx === 0) { isDeleting = false; phIdx = (phIdx + 1) % phrases.length; setTimeout(typeEffect, 500); }
+            else { setTimeout(typeEffect, isDeleting ? 50 : 100); }
+        }
+
+
+        // --- PRICING LIGHTBOX & PAYMENT (Phase 3 Rebuild) ---
+        const pricingData = [
+            { title: 'FRONTEND', amount: 399, currency: 'USD', hex: '#86efac' },
+            { title: 'BACKEND', amount: 699, currency: 'USD', hex: '#ffb366' },
+            { title: 'FULLSTACK', amount: 1299, currency: 'USD', hex: '#fca5a5' },
+            { title: 'CUSTOM', amount: 0, currency: 'USD', hex: '#93c5fd' }
+        ];
+        const API_BASE = ''; // Same origin
+        let currentPricingIndex = -1;
+
+        function openPricingLightbox(idx) {
+            const lb = document.getElementById('price-lightbox');
+            const data = pricingData[idx];
+            if (!lb || !data) return;
+            currentPricingIndex = idx;
+
+            document.getElementById('plb-title-main').textContent = data.title;
+            const priceText = data.amount > 0 ? `${data.currency || 'USD'} ${data.amount.toLocaleString()}` : (data.title === 'CUSTOM EXPERIENCE' ? 'CONTACT FOR QUOTE' : 'CUSTOM');
+            document.getElementById('plb-amount-main').textContent = priceText;
+            document.getElementById('plb-live-card').style.background = `linear-gradient(135deg, ${data.hex} 0%, #000 100%)`;
+            const outer = document.getElementById('plb-outer-card');
+            if (outer) outer.style.background = data.hex;
+
+            setPayMethod('card');
+
+            lb.classList.add('lb-open');
+            lb.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePricingLightbox() {
+            const lb = document.getElementById('price-lightbox');
+            lb.classList.remove('lb-open');
+            lb.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function setPayMethod(method) {
+            // Card only as requested
+            const btnCard = document.getElementById('tab-card');
+            const formCard = document.getElementById('form-card');
+            if (btnCard) btnCard.classList.add('active');
+            if (formCard) formCard.style.display = 'flex';
+        }
+
+        function updateCardDisplay(val) {
+            const display = document.getElementById('card-num-display');
+            let formatted = val.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim();
+            display.textContent = formatted || '**** **** **** ****';
+        }
+
+        function processPayment() {
+            const status = document.getElementById('pay-status-msg');
+            const idx = currentPricingIndex;
+            const data = pricingData[idx] || null;
+
+            const cardNum = document.querySelector('#form-card input[placeholder="CARD NUMBER"]').value;
+            const expiry = document.querySelector('#form-card input[placeholder="MM/YY"]').value;
+            const cvv = document.querySelector('#form-card input[placeholder="CVV"]').value;
+
+            if (!cardNum || !expiry || !cvv) {
+                status.textContent = 'Please fill all card details.';
+                status.style.color = '#dc2626';
+                return;
+            }
+
+            status.textContent = '// PROCESSING...';
+            status.style.color = 'var(--orange)';
+
+            fetch(API_BASE + '/api/payments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    plan: data.title,
+                    amount: data.amount,
+                    cardDetails: { number: cardNum, expiry, cvv }
+                })
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (res && res.success) {
+                        status.textContent = '✓ ' + res.message;
+                        status.style.color = 'var(--green-light)';
+                        setTimeout(closePricingLightbox, 2000);
+                    } else {
+                        status.textContent = 'Payment failed.';
+                        status.style.color = '#dc2626';
+                    }
+                })
+                .catch(() => {
+                    status.textContent = 'Server error.';
+                    status.style.color = '#dc2626';
+                });
+        }
+
+        function submitCommissionInquiry(btn) {
+            const form = btn.parentElement;
+            const name = form.querySelector('input[placeholder="Required"]').value;
+            const email = form.querySelector('input[placeholder="you@example.com"]').value;
+            const phone = form.querySelector('input[placeholder="+254..."]').value;
+            const type = form.querySelector('select').value;
+            const description = form.querySelector('textarea').value;
+
+            if (!name || !email) {
+                alert('Name and Email are required.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'SENDING...';
+
+            fetch(API_BASE + '/api/commissions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, type, description })
+            })
+                .then(r => r.json())
+                .then(res => {
+                    alert(res.message);
+                    closeCommission();
+                })
+                .catch(() => alert('Error sending inquiry.'))
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.textContent = 'SEND INQUIRY →';
+                });
+        }
+        function applyCouponMain() {
+            const code = document.getElementById('coupon-input-main').value.trim().toUpperCase();
+            const msg = document.getElementById('coupon-msg-main');
+            if (code === 'NORRIS10') { msg.textContent = 'Code applied: 10% off!'; msg.style.color = 'var(--orange)'; }
+            else { msg.textContent = 'Invalid code.'; msg.style.color = 'red'; }
+        }
+
+        function flipPricingCard(src, idx) {
+            const e = src && src.currentTarget ? null : window.event;
+            if (e && e.preventDefault) e.preventDefault();
+            if (e && e.stopPropagation) e.stopPropagation();
+            const wrap = (src && src.currentTarget) ? src.currentTarget
+                : (src && src.nodeType === 1 ? src : this);
+            const card = wrap ? wrap.querySelector('.pcard-inner') : null;
+            if (card) {
+                card.classList.add('flip');
+                setTimeout(() => {
+                    card.classList.remove('flip');
+                    openPricingLightbox(idx);
+                }, 300);
+            } else {
+                openPricingLightbox(idx);
+            }
+        }
+        // --- INIT ---
+        window.addEventListener('load', () => {
+            typeEffect();
+
+            // Init background icons
+            const container = document.getElementById('bg-icons');
+            const icons = ['0', '1', '•'];
+            for (let i = 0; i < 30; i++) {
+                const el = document.createElement('div');
+                el.className = 'bg-icon';
+                el.textContent = icons[Math.floor(Math.random() * icons.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDelay = (Math.random() * 15) + 's';
+                el.style.fontSize = (Math.random() * 12 + 10) + 'px';
+                container.appendChild(el);
+            }
+
+            const revEls = document.querySelectorAll('.reveal');
+            window.revealObserver = new IntersectionObserver(entries => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); window.revealObserver.unobserve(e.target); } });
+            }, { threshold: 0.1 });
+            revEls.forEach(el => window.revealObserver.observe(el));
+            buildSkillsGrid();
+            buildProblemsGrid();
+        });
+    </script>
+    <!-- PRICING LIGHTBOX -->
+    <div id="price-lightbox" class="lightbox-overlay" style="display:none;"
+        onclick="if(event.target.id==='price-lightbox') closePricingLightbox()">
+        <div class="lb-panel" id="plb-panel" style="max-width:520px; width:92%;">
+            <div class="pcard-outer c-white-br" id="plb-outer-card" style="width:100%;">
+                <div class="pcard-inner c-white" id="plb-inner-card" style="padding:30px; position:relative;">
+                    <button class="lb-close" onclick="closePricingLightbox()"
+                        style="top:15px; right:15px; position:absolute;">×</button>
+                    <div id="plb-num-main"
+                        style="font-family:'Space Mono', monospace; font-size:10px; color:#aaa; margin-bottom:10px;">
+                        //
+                        SECURE PAYMENT</div>
+                    <h2 id="plb-title-main"
+                        style="font-family:'Press Start 2P', monospace; font-size:14px; margin-bottom:5px;">PLAN
+                        NAME</h2>
+                    <div id="plb-amount-main"
+                        style="font-family:'Press Start 2P', monospace; font-size:12px; color:var(--orange); margin-bottom:20px;">
+                        KES 0</div>
+
+                    <!-- LIVE CARD MOCKUP -->
+                    <div class="live-card" id="plb-live-card"
+                        style="margin-bottom:25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                        <div class="live-card-chip"></div>
+                        <div class="live-card-num" id="card-num-display">**** **** **** ****</div>
+                        <div class="live-card-val">
+                            <div>
+                                <div style="font-size:6px; opacity:0.6;">HOLDER</div>
+                                <div class="live-card-name">YOUR NAME</div>
+                            </div>
+                            <div>
+                                <div style="font-size:6px; opacity:0.6;">EXPIRES</div>
+                                <div>12/28</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pay-tabs" style="margin-bottom:20px;">
+                        <div class="pay-tab active" id="tab-card">CARD ONLY</div>
+                    </div>
+
+                    <div id="form-card" class="pay-form" style="display:flex; flex-direction:column; gap:12px;">
+                        <input type="text" placeholder="CARD NUMBER" class="coupon-input"
+                            style="width:100%; border:3px solid #000; padding:12px;"
+                            oninput="updateCardDisplay(this.value)">
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" placeholder="MM/YY" class="coupon-input"
+                                style="width:50%; border:3px solid #000; padding:12px;">
+                            <input type="text" placeholder="CVV" class="coupon-input"
+                                style="width:50%; border:3px solid #000; padding:12px;">
+                        </div>
+                        <button class="pay-submit" onclick="processPayment()"
+                            style="margin-top:10px; padding:15px;">CONFIRM
+                            PAYMENT</button>
+                    </div>
+
+
+                    <div id="pay-status-msg"
+                        style="text-align:center; margin-top:15px; font-family:'Press Start 2P', monospace; font-size:8px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+        <filter id="grainy-noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+        </filter>
+    </svg>
+</body>
+
+</html>

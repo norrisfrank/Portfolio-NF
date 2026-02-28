@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Billing</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            background: #f4f4f4;
+            font-family: 'Space Mono', monospace;
+            text-align: center;
+            padding: 60px 20px;
+            color: #000
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-family: 'Press Start 2P', monospace
+        }
+
+        .subtitle {
+            font-size: 12px;
+            margin-bottom: 40px;
+            color: #333
+        }
+
+        .pricing-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 32px;
+            align-items: start;
+            max-width: 1100px;
+            margin: 0 auto
+        }
+
+        @keyframes cardWave {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0);
+            }
+
+            25% {
+                transform: translateY(-5px) rotate(-0.25deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(0.25deg);
+            }
+
+            75% {
+                transform: translateY(-5px) rotate(-0.25deg);
+            }
+        }
+
+        .pcard-wrap {
+            position: relative;
+            transition: transform .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            padding-bottom: 12px;
+            padding-right: 12px;
+            animation: cardWave 6.5s ease-in-out infinite;
+        }
+
+        .pcard-wrap:hover {
+            transform: scale(1.02) translateY(-10px) rotate(-1deg);
+            animation-play-state: paused;
+        }
+
+        .pcard-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 8px -4px -4px 8px;
+            background: #000;
+            clip-path: polygon(0 24px, 4px 24px, 4px 16px, 8px 16px, 8px 12px, 12px 12px, 12px 8px, 16px 8px, 16px 4px, 24px 4px, 24px 0, calc(100% - 24px) 0, calc(100% - 24px) 4px, calc(100% - 16px) 4px, calc(100% - 16px) 8px, calc(100% - 12px) 8px, calc(100% - 12px) 12px, calc(100% - 8px) 12px, calc(100% - 8px) 16px, calc(100% - 4px) 16px, calc(100% - 4px) 24px, 100% 24px, 100% calc(100% - 24px), calc(100% - 4px) calc(100% - 24px), calc(100% - 4px) calc(100% - 16px), calc(100% - 8px) calc(100% - 16px), calc(100% - 8px) calc(100% - 12px), calc(100% - 12px) calc(100% - 12px), calc(100% - 12px) calc(100% - 8px), calc(100% - 16px) calc(100% - 8px), calc(100% - 16px) calc(100% - 4px), calc(100% - 24px) calc(100% - 4px), calc(100% - 24px) 100%, 24px 100%, 24px calc(100% - 4px), 16px calc(100% - 4px), 16px calc(100% - 8px), 12px calc(100% - 8px), 12px calc(100% - 12px), 8px calc(100% - 12px), 8px calc(100% - 16px), 4px calc(100% - 16px), 4px calc(100% - 24px), 0 calc(100% - 24px))
+        }
+
+        .pcard-outer {
+            position: relative;
+            z-index: 1;
+            background: #222;
+            padding: 8px;
+            clip-path: polygon(0 24px, 4px 24px, 4px 16px, 8px 16px, 8px 12px, 12px 12px, 12px 8px, 16px 8px, 16px 4px, 24px 4px, 24px 0, calc(100% - 24px) 0, calc(100% - 24px) 4px, calc(100% - 16px) 4px, calc(100% - 16px) 8px, calc(100% - 12px) 8px, calc(100% - 12px) 12px, calc(100% - 8px) 12px, calc(100% - 8px) 16px, calc(100% - 4px) 16px, calc(100% - 4px) 24px, 100% 24px, 100% calc(100% - 24px), calc(100% - 4px) calc(100% - 24px), calc(100% - 4px) calc(100% - 16px), calc(100% - 8px) calc(100% - 16px), calc(100% - 8px) calc(100% - 12px), calc(100% - 12px) calc(100% - 12px), calc(100% - 12px) calc(100% - 8px), calc(100% - 16px) calc(100% - 8px), calc(100% - 16px) calc(100% - 4px), calc(100% - 24px) calc(100% - 4px), calc(100% - 24px) 100%, 24px 100%, 24px calc(100% - 4px), 16px calc(100% - 4px), 16px calc(100% - 8px), 12px calc(100% - 8px), 12px calc(100% - 12px), 8px calc(100% - 12px), 8px calc(100% - 16px), 4px calc(100% - 16px), 4px calc(100% - 24px), 0 calc(100% - 24px)
+            }
+
+            .pcard-inner {
+                background:#fff; color:#000; padding:32px 24px; height:100%; display:flex; flex-direction:column; align-items:center; text-align:center; clip-path:polygon(0 18px, 4px 18px, 4px 12px, 8px 12px, 8px 8px, 12px 8px, 12px 4px, 18px 4px, 18px 0, calc(100% - 18px) 0, calc(100% - 18px) 4px, calc(100% - 12px) 4px, calc(100% - 12px) 8px, calc(100% - 8px) 8px, calc(100% - 8px) 12px, calc(100% - 4px) 12px, calc(100% - 4px) 18px, 100% 18px, 100% calc(100% - 18px), calc(100% - 4px) calc(100% - 18px), calc(100% - 4px) calc(100% - 12px), calc(100% - 8px) calc(100% - 12px), calc(100% - 8px) calc(100% - 8px), calc(100% - 12px) calc(100% - 8px), calc(100% - 12px) calc(100% - 4px), calc(100% - 18px) calc(100% - 4px), calc(100% - 18px) 100%, 18px 100%, 18px calc(100% - 4px), 12px calc(100% - 4px), 12px calc(100% - 8px), 8px calc(100% - 8px), 8px calc(100% - 12px), 4px calc(100% - 12px), 4px calc(100% - 18px), 0 calc(100% - 18px)
+                }
+
+                .c-green {
+                    background:#86efac
+                }
+
+                .c-orange {
+                    background:#ffb366
+                }
+
+                .c-red {
+                    background:#fca5a5
+                }
+
+                .c-white {
+                    background:#ffffff
+                }
+
+                .price-category {
+                    font-size:8px; margin-bottom:6px; letter-spacing:1px; text-transform:uppercase; font-family:'Press Start 2P', monospace
+                }
+
+                .price-subtitle {
+                    font-size:11px; font-weight:bold; margin-bottom:32px
+                }
+
+                .price-large {
+                    font-size:22px; margin-bottom:30px
+                }
+
+                .features {
+                    list-style:none; padding:0; margin:0 0 32px 0; text-align:left; width:100%
+                }
+
+                .features li {
+                    font-size:12px; font-weight:bold; padding:8px 0; display:flex; align-items:center; gap:12px
+                }
+
+                .features li::before {
+                    content:""; width:8px; height:8px; background:#000; display:inline-block; clip-path:polygon(0 2px, 2px 2px, 2px 0, 6px 0, 6px 2px, 8px 2px, 8px 6px, 6px 6px, 6px 8px, 2px 8px, 2px 6px, 0 6px)
+                }
+
+                .btn {
+                    font-size:10px; padding:14px 24px; background:transparent; color:#000; border:4px solid #000; cursor:pointer; margin-top:auto; width:100%; max-width:220px; clip-path:polygon(0 10px, 4px 10px, 4px 6px, 6px 6px, 6px 4px, 10px 4px, 10px 0, calc(100% - 10px) 0, calc(100% - 10px) 4px, calc(100% - 6px) 4px, calc(100% - 6px) 6px, calc(100% - 4px) 6px, calc(100% - 4px) 10px, 100% 10px, 100% calc(100% - 10px), calc(100% - 4px) calc(100% - 10px), calc(100% - 4px) calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) calc(100% - 4px), calc(100% - 10px) calc(100% - 4px), calc(100% - 10px) 100%, 10px 100%, 10px calc(100% - 4px), 6px calc(100% - 4px), 6px calc(100% - 6px), 4px calc(100% - 6px), 4px calc(100% - 10px), 0 calc(100% - 10px)
+                    }
+
+                    .btn:hover {
+                        background:#000; color:#fff
+                    }
+    </style>
+</head>
+
+<body>
+
+    <h1>PRICING</h1>
+    <p class="subtitle">Every stack crafted for your growth — choose your build path</p>
+
+    <div class="pricing-container">
+        <div class="pcard-wrap" onclick="selectPlan('Frontend')">
+            <div class="pcard-outer" style="background:#86efac">
+                <div class="pcard-inner c-green">
+                    <div class="price-category">FRONTEND</div>
+                    <div class="price-subtitle">Modern UI/UX</div>
+                    <div class="price-large">$399</div>
+                    <ul class="features">
+                        <li>Responsive UI</li>
+                        <li>Pixel / Modern Design</li>
+                        <li>Basic SEO</li>
+                        <li>2 Revisions</li>
+                    </ul>
+                    <button class="btn">GET STARTED</button>
+                </div>
+            </div>
+        </div>
+        <div class="pcard-wrap" onclick="selectPlan('Backend')">
+            <div class="pcard-outer" style="background:#ffb366">
+                <div class="pcard-inner c-orange">
+                    <div class="price-category">BACKEND</div>
+                    <div class="price-subtitle">API & Architecture</div>
+                    <div class="price-large">$699</div>
+                    <ul class="features">
+                        <li>REST API Setup</li>
+                        <li>Auth + JWT</li>
+                        <li>Database Integration</li>
+                        <li>Deployment Ready</li>
+                    </ul>
+                    <button class="btn">BUILD SERVER</button>
+                </div>
+            </div>
+        </div>
+        <div class="pcard-wrap" onclick="selectPlan('Fullstack')">
+            <div class="pcard-outer" style="background:#fca5a5">
+                <div class="pcard-inner c-red">
+                    <div class="price-category">FULLSTACK</div>
+                    <div class="price-subtitle">Complete Solution</div>
+                    <div class="price-large">$1,299</div>
+                    <ul class="features">
+                        <li>Frontend + Backend</li>
+                        <li>Auth + Payments</li>
+                        <li>Dashboard</li>
+                        <li>Production Deployment</li>
+                    </ul>
+                    <button class="btn">GO FULLSTACK</button>
+                </div>
+            </div>
+        </div>
+        <div class="pcard-wrap" onclick="selectPlan('Custom')">
+            <div class="pcard-outer" style="background:#93c5fd">
+                <div class="pcard-inner c-white">
+                    <div class="price-category">CUSTOM</div>
+                    <div class="price-subtitle">Enterprise Scale</div>
+                    <div class="price-large">CUSTOM</div>
+                    <ul class="features">
+                        <li>Advanced Architecture</li>
+                        <li>Scalable Infrastructure</li>
+                        <li>DevOps + CI/CD</li>
+                        <li>Dedicated Team</li>
+                    </ul>
+                    <button class="btn">LET'S TALK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectPlan(plan) {
+            const cardNum = prompt("Enter Card Number (Mock):", "**** **** **** 1234");
+            if (!cardNum) return;
+
+            const amount = { 'Frontend': 399, 'Backend': 699, 'Fullstack': 1299, 'Custom': 0 }[plan];
+
+            fetch('/api/payments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    plan: plan,
+                    amount: amount,
+                    cardDetails: { number: cardNum, expiry: '12/28', cvv: '123' }
+                })
+            })
+                .then(r => r.json())
+                .then(res => {
+                    alert(res.message);
+                })
+                .catch(() => alert('Error processing payment.'));
+        }
+    </script>
+
+
+</body>
+
+</html>
