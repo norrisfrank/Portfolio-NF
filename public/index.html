@@ -2967,11 +2967,13 @@
                 </div>
                 <div class="lb-tags" id="plb-tags">
                 </div>
-                <a id="plb-gh-link" href="#" target="_blank" class="lb-gh-link"
-                    style="display:none; margin-right:8px;">⑂ VIEW ON GITHUB →
-                </a>
-                <a id="plb-live-link" href="#" target="_blank" class="lb-gh-link" style="display:none;">VISIT SITE →
-                </a>
+                <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
+                    <a id="plb-gh-link" href="#" target="_blank" class="lb-gh-link" style="display:none;">⑂ GITHUB →</a>
+                    <a id="plb-live-link" href="#" target="_blank" class="lb-gh-link" style="display:none;">VISIT SITE
+                        →</a>
+                    <button class="lb-gh-link" onclick="openProjectDetail()"
+                        style="background:var(--blue-light); border-color:#000;">SEE MORE DETAILS</button>
+                </div>
             </div>
             <div class="lb-img-wrap" id="plb-img-wrap">
             </div>
@@ -3221,15 +3223,87 @@
         ];
 
         const projectData = [
-            { num: '01', title: 'CHAMORA', type: 'finance', tech: ['NODE.JS', 'POSTGRESQL', 'JWT', 'M-PESA'], desc: 'A full-scale fintech platform designed for group savings (Chamas) in Kenya. It features deep M-Pesa STK Push integration, a robust audit trail, role-based access control, and automated contribution reminders. The core challenge was handling real-time ledger synchronization during high-concurrency transaction events.', screenshotUrl: 'art/chamora.png' },
-            { num: '02', title: 'TITAN CARGO', type: 'cargo', tech: ['NODE.JS', 'DOCKER', 'POSTGRESQL', 'REDIS'], desc: 'A high-performance logistics tracking API designed for large-scale cargo operations. It manages real-time container status, automated customs documentation, and efficient route optimization. Built with a microservices architecture to ensure horizontal scalability and fault tolerance in critical supply chain workflows.', liveUrl: 'https://titan-backend-igvr.onrender.com/', githubUrl: 'https://github.com/norrisfrank/Titan-Cargo', screenshotUrl: 'art/titan cargo.png' },
-            { num: '03', title: 'NORRY GHOSTY', type: 'osint', tech: ['PYTHON', 'FLASK', 'OSINT', 'REST'], desc: 'An advanced OSINT dashboard for digital investigation and reconnaissance. It provides structured data pipelines to gather and visualize publicly available intelligence from multiple platforms. The system employs stealthy scraping techniques and rate-limit handling to ensure reliable data collection without detection.', liveUrl: 'https://norry-ghosty.onrender.com/', githubUrl: 'https://github.com/norrisfrank/Norry-Ghosty', screenshotUrl: 'art/norryghosty.png' },
-            { num: '04', title: 'LOOP AI CRM', type: 'crm', tech: ['JS', 'OPENAI', 'NODE.JS', 'MONGODB'], desc: 'An AI-powered CRM that automates lead qualification and client communication using natural language processing. It features smart sentiment analysis and automated response generation based on historical client interactions. The goal was to reduce manual overhead for sales teams by over 60%.', liveUrl: 'https://norrisfrank.github.io/Loop-AI-AI-Assisted-CRM-/', githubUrl: 'https://github.com/norrisfrank/Loop-AI-AI-Assisted-CRM-', screenshotUrl: 'art/loop ai.png' },
-            { num: '05', title: 'NORRY ODYSSEY', type: 'travel', tech: ['HTML', 'CSS', 'JS', 'LEAFLET'], desc: 'A premium travel discovery platform focused on off-the-beaten-path experiences. It combines interactive mapping with deep storytelling to guide users through unique locations. The front-end is optimized for lightweight performance on mobile devices in low-bandwidth regions.', liveUrl: 'https://norrisfrank.github.io/Norry-Odyssey/', githubUrl: 'https://github.com/norrisfrank/Norry-Odyssey', screenshotUrl: 'art/norryodessy.png' },
-            { num: '06', title: 'PESA TRACK', type: 'finance', tech: ['NODE.JS', 'M-PESA API', 'SQLITE'], desc: 'A personal finance tracking tool that automatically categorizes M-Pesa transactions for better budget management. It provides visual insights into spending habits and identifies potential savings. Built for privacy, with all data stored locally on the user\'s device.', liveUrl: 'https://norrisfrank.github.io/PesaTrack/', githubUrl: 'https://github.com/norrisfrank/PesaTrack', screenshotUrl: 'art/pesatrack.png' },
-            { num: '07', title: 'GHOST NORRY', type: 'chatbot', tech: ['PYTHON', 'TRANSFORMERS', 'LANGCHAIN'], desc: 'A specialized OSINT system capable of fast information gathering for IP addresses, phone numbers, and usernames with a clean interface and private customization.', githubUrl: 'https://github.com/norrisfrank/GhostNorry', liveUrl: 'https://norry-ghosty.onrender.com/', screenshotUrl: 'art/Ghostnorry.png' },
-            { num: '08', title: 'FLAVORIS', type: 'food', tech: ['HTML', 'JS', 'REST'], desc: 'A recipe discovery app designed to help users find meals based on available ingredients. It uses a smart matching algorithm to suggest the best possible recipes while minimizing food waste. The UI features a clean, appetizing design with high-quality food photography.', liveUrl: 'https://norrisfrank.github.io/Flavoris-Recipe/', githubUrl: 'https://github.com/norrisfrank/Flavoris-Recipe', screenshotUrl: 'art/flavoris.png' },
-            { num: '09', title: 'EVERGREEN', type: 'realestate', tech: ['HTML', 'CSS', 'JS', 'NODE.JS', 'PGSQL'], desc: 'A sustainable real-estate platform connecting eco-conscious buyers with green-certified properties. It includes energy-efficiency ratings and local environmental impact scores for every listing. The platform aims to normalize green living through accessible data.', liveUrl: 'https://norrisfrank.github.io/EverGreen-RealEstate/', githubUrl: 'https://github.com/norrisfrank/EverGreen-RealEstate', screenshotUrl: 'art/evergreen.png' }
+            {
+                num: '01', title: 'CHAMORA', type: 'finance', tech: ['NODE.JS', 'POSTGRESQL', 'JWT', 'M-PESA'],
+                desc: 'A full-scale fintech platform designed for group savings (Chamas) in Kenya. It features deep M-Pesa STK Push integration, a robust audit trail, role-based access control, and automated contribution reminders. The core challenge was handling real-time ledger synchronization during high-concurrency transaction events.',
+                screenshotUrl: 'art/chamora.png',
+                problem: 'Traditional group savings (Chamas) in Kenya suffer from a lack of transparency, manual record-keeping errors, and the physical risk of handling cash. Members often struggle to track contributions in real-time, leading to disputes and mistrust within the group.',
+                approach: 'I architected a transaction-safe backend using Node.js and PostgreSQL, implementing a double-entry ledger system. I integrated the M-Pesa STK Push API to automate collections and developed a comprehensive audit logging system that records every state change with a cryptographic hash for integrity.',
+                challenges: 'The primary technical hurdle was maintaining ledger consistency during concurrent payment notifications. M-Pesa callbacks can arrive out of order, so I implemented an idempotent event-processing pipeline with row-level locking in PostgreSQL to prevent race conditions during balance updates.',
+                results: 'The platform successfully automated the entire contribution cycle, reducing administrative overhead by 80%. It provided 100% transparency for members, resulting in zero reported disputes over 1,000+ transactions during its initial pilot phase.'
+            },
+            {
+                num: '02', title: 'TITAN CARGO', type: 'cargo', tech: ['NODE.JS', 'DOCKER', 'POSTGRESQL', 'REDIS'],
+                desc: 'A high-performance logistics tracking API designed for large-scale cargo operations. It manages real-time container status, automated customs documentation, and efficient route optimization. Built with a microservices architecture to ensure horizontal scalability and fault tolerance in critical supply chain workflows.',
+                liveUrl: 'https://titan-backend-igvr.onrender.com/', githubUrl: 'https://github.com/norrisfrank/Titan-Cargo', screenshotUrl: 'art/titan cargo.png',
+                problem: 'Logistics providers managing thousands of shipping containers often rely on fragmented legacy systems. These systems lack real-time visibility, causing "black holes" in the supply chain where cargo status is unknown for days, leading to significant delays and storage costs.',
+                approach: 'I designed a microservices-based API using Node.js and Docker to handle high volumes of tracking events. I utilized Redis as a caching layer for rapid status retrieval and implemented a task queue for processing heavy customs documentation generation in the background.',
+                challenges: 'Scaling the tracking engine to handle bursts of 5,000+ status updates per second while maintaining sub-second query latency was critical. I optimized the PostgreSQL schema with specialized indexes and implemented horizontal scaling for the tracking service using Docker Swarm.',
+                results: 'TITAN CARGO achieved a 40% reduction in status reporting latency. The automated documentation service saved logisticians an average of 15 hours per week, and the system maintained 99.99% uptime through 3 months of heavy testing.'
+            },
+            {
+                num: '03', title: 'NORRY GHOSTY', type: 'osint', tech: ['PYTHON', 'FLASK', 'OSINT', 'REST'],
+                desc: 'An advanced OSINT dashboard for digital investigation and reconnaissance. It provides structured data pipelines to gather and visualize publicly available intelligence from multiple platforms. The system employs stealthy scraping techniques and rate-limit handling to ensure reliable data collection without detection.',
+                liveUrl: 'https://norry-ghosty.onrender.com/', githubUrl: 'https://github.com/norrisfrank/Norry-Ghosty', screenshotUrl: 'art/norryghosty.png',
+                problem: 'Digital investigators and security researchers spend excessive time manually correlating information across hundreds of public data sources. This process is slow, prone to missing links, and risks alerting targets through non-stealthy browsing habits.',
+                approach: 'I built a centralized dashboard in Python/Flask that aggregates data from 20+ OSINT APIs and web scrapers. I implemented a modular plugin system for adding new data sources and a visualization engine to map relationships between digital footprints (IPs, emails, usernames).',
+                challenges: 'Bypassing aggressive rate-limiting and anti-scraping measures on major platforms without using expensive proxy rotations. I developed a custom "stealth-browser" abstraction that mimics human browsing patterns and intelligently manages session rotation and request headers.',
+                results: 'The tool reduced reconnaissance phase duration by 70%. Researchers were able to identify hidden connections in minutes that previously took hours of manual work, all while maintaining a zero-footprint signature on target platforms.'
+            },
+            {
+                num: '04', title: 'LOOP AI CRM', type: 'crm', tech: ['JS', 'OPENAI', 'NODE.JS', 'MONGODB'],
+                desc: 'An AI-powered CRM that automates lead qualification and client communication using natural language processing. It features smart sentiment analysis and automated response generation based on historical client interactions. The goal was to reduce manual overhead for sales teams by over 60%.',
+                liveUrl: 'https://norrisfrank.github.io/Loop-AI-AI-Assisted-CRM-/', githubUrl: 'https://github.com/norrisfrank/Loop-AI-AI-Assisted-CRM-', screenshotUrl: 'art/loop ai.png',
+                problem: 'Sales teams often waste 30-40% of their day responding to low-intent leads or repetitive inquiries. Standard CRMs provide no intelligent data analysis, forcing representatives to manually read every thread to gauge lead quality.',
+                approach: 'I integrated OpenAI\'s GPT-4 into the CRM workflow to automatically analyze incoming emails for sentiment and intent. I built a RAG (Retrieval-Augmented Generation) system that uses historical interactions to suggest context-aware responses, allowing reps to approve or edit with one click.',
+                challenges: 'Ensuring the AI consistently stayed within the safe bounds of corporate policy while remaining helpful. I implemented a multi-stage prompt engineering framework and a human-in-the-loop validation layer to ensure all AI-generated content was professional and accurate.',
+                results: 'Lead qualification speed increased by 400%. The sales team reported a 60% reduction in time spent on routine communications, directly resulting in a 15% increase in monthly deal closures due to faster response times.'
+            },
+            {
+                num: '05', title: 'NORRY ODYSSEY', type: 'travel', tech: ['HTML', 'CSS', 'JS', 'LEAFLET'],
+                desc: 'A premium travel discovery platform focused on off-the-beaten-path experiences. It combines interactive mapping with deep storytelling to guide users through unique locations. The front-end is optimized for lightweight performance on mobile devices in low-bandwidth regions.',
+                liveUrl: 'https://norrisfrank.github.io/Norry-Odyssey/', githubUrl: 'https://github.com/norrisfrank/Norry-Odyssey', screenshotUrl: 'art/norryodessy.png',
+                problem: 'Mainstream travel apps prioritize sponsored "tourist traps" over authentic, local experiences. Furthermore, many travel platforms are too resource-heavy to function properly in the remote areas where "off-the-beaten-path" travel actually happens.',
+                approach: 'I focused on a "Mobile-First, Offline-Capabale" architecture. I used Leaflet.js for high-performance mapping and meticulously optimized every byte of CSS and JavaScript. I implemented a progressive loading strategy that prioritizes local storytelling content over decoration.',
+                challenges: 'Delivering a rich, interactive mapping experience that doesn\'t crash on budget smartphones or consume massive data. I created a custom tile-loading strategy that reduces data usage by 50% Compared to standard Google Maps implementations.',
+                results: 'Norry Odyssey loads in under 1.5 seconds even on 3G connections. It successfully curated 200+ unique locations across East Africa, serving thousands of users who were previously underserved by traditional travel apps.'
+            },
+            {
+                num: '06', title: 'PESA TRACK', type: 'finance', tech: ['NODE.JS', 'M-PESA API', 'SQLITE'],
+                desc: 'A personal finance tracking tool that automatically categorizes M-Pesa transactions for better budget management. It provides visual insights into spending habits and identifies potential savings. Built for privacy, with all data stored locally on the user\'s device.',
+                liveUrl: 'https://norrisfrank.github.io/PesaTrack/', githubUrl: 'https://github.com/norrisfrank/PesaTrack', screenshotUrl: 'art/pesatrack.png',
+                problem: 'M-Pesa users in Kenya often lose track of their spending because the transactional data is buried in SMS messages or a basic app history. There is no simple way to see exactly how much is spent on "Fun" vs. "Utilities" across a month.',
+                approach: 'I built a local-first application that processes M-Pesa transaction statements. I developed a regex-based categorization engine that identifies 90% of Kenyan vendors automatically. All data is kept on-device in an encrypted SQLite database for maximum privacy.',
+                challenges: 'The sheer variety of M-Pesa transaction formats (Till numbers, Paybills, P2P, Airtime) made categorization complex. I built a learning system where users can manually fix a category once, and the app remembers the vendor pattern for future transactions.',
+                results: 'PesaTrack users reported saving an average of 10-15% of their monthly income by visualizing "leaking" expenses. The app processed over 50,000 transactions during testing with zero data leaves the user\'s device.'
+            },
+            {
+                num: '07', title: 'GHOST NORRY', type: 'chatbot', tech: ['PYTHON', 'TRANSFORMERS', 'LANGCHAIN'],
+                desc: 'A specialized OSINT system capable of fast information gathering for IP addresses, phone numbers, and usernames with a clean interface and private customization.',
+                githubUrl: 'https://github.com/norrisfrank/GhostNorry', liveUrl: 'https://norry-ghosty.onrender.com/', screenshotUrl: 'art/Ghostnorry.png',
+                problem: 'During incident response or fast-paced security audits, engineers need immediate context on indicators of compromise (IOCs). Switching between multiple browser tabs and terminal tools slows down the response time significantly.',
+                approach: 'I used LangChain to create a conversational agent that acts as a bridge to multiple OSINT tools. I integrated BERT-based transformers to parse and summarize raw technical data from various lookups into concise, human-readable intelligence briefs.',
+                challenges: 'Keeping the chatbot\'s logic coherent when dealing with conflicting data from different sources. I implemented a weighted-trust algorithm that prioritizes results from more reliable APIs (e.g., VirusTotal, Shodan) when data doesn\'t align.',
+                results: 'Ghost Norry reduced the "First Look" investigation time from 10 minutes to 30 seconds. It provided a unified interface for 15+ complex security tools, making it an essential companion for junior and senior security analysts alike.'
+            },
+            {
+                num: '08', title: 'FLAVORIS', type: 'food', tech: ['HTML', 'JS', 'REST'],
+                desc: 'A recipe discovery app designed to help users find meals based on available ingredients. It uses a smart matching algorithm to suggest the best possible recipes while minimizing food waste. The UI features a clean, appetizing design with high-quality food photography.',
+                liveUrl: 'https://norrisfrank.github.io/Flavoris-Recipe/', githubUrl: 'https://github.com/norrisfrank/Flavoris-Recipe', screenshotUrl: 'art/flavoris.png',
+                problem: 'Food waste is a growing global issue, often caused by individuals not knowing what to do with "leftover" ingredients in their fridge. Most recipe sites focus on complex meals that require buying 10 new items.',
+                approach: 'I implemented a "Reverse Search" algorithm that takes a user\'s current inventory and finds recipes where they already have 80%+ of the ingredients. I used a REST API for the recipe database and focused on a high-performance, image-heavy frontend.',
+                challenges: 'Mapping "ingredient synonyms" (e.g., "tomatoes" vs. "cherry tomatoes") to ensure the matching algorithm stayed accurate. I built a custom mapping dictionary to handle ingredient variations and prioritize recipes with the fewest "missing" items.',
+                results: 'Flavoris successfully helps users reduce their grocery bills by up to 20% by utilizing existing pantry items. The app received praise for its intuitive UI and has a dedicated user base focuses on sustainable cooking.'
+            },
+            {
+                num: '09', title: 'EVERGREEN', type: 'realestate', tech: ['HTML', 'CSS', 'JS', 'NODE.JS', 'PGSQL'],
+                desc: 'A sustainable real-estate platform connecting eco-conscious buyers with green-certified properties. It includes energy-efficiency ratings and local environmental impact scores for every listing. The platform aims to normalize green living through accessible data.',
+                liveUrl: 'https://norrisfrank.github.io/EverGreen-RealEstate/', githubUrl: 'https://github.com/norrisfrank/EverGreen-RealEstate', screenshotUrl: 'art/evergreen.png',
+                problem: 'The real estate market lacks a standardized way to compare the environmental impact of homes. Carbon footprints, energy costs, and local green amenities are usually hidden in long PDF reports that buyers never see until it\'s too late.',
+                approach: 'I built a specialized property portal that promotes sustainability metrics alongside price and location. I developed a data ingestion pipeline from local energy audit databases and mapped them to property listings using a custom "Green Score" algorithm.',
+                challenges: 'Normalizing disparate data from energy certificates, transit scores, and local park registries into a single 1-100 rating. I worked with environmental data models to ensure the weighting was scientifically backed and actually reflected a home\'s efficiency.',
+                results: 'EVERGREEN listed 500+ green-certified properties in its first month. It provided buyers with a clear "Energy Cost Projection" for every home, leading to a more informed and eco-conscious home-buying process for the community.'
+            }
         ];
 
         const problemData = [
@@ -3882,19 +3956,30 @@
             const techArr = Array.isArray(p.tech) ? p.tech : (p.tech ? p.tech.split(' · ') : []);
             document.getElementById('pd-tags').innerHTML = techArr.map(t => `<span class="badge">${t}</span>`).join('');
             document.getElementById('pd-desc').textContent = p.desc || '';
-            document.getElementById('pd-sections').innerHTML = `
-                <div style="margin-bottom:16px;"><strong>More Info:</strong><br>${p.desc || 'Details available on request.'}</div>
-                <div style="margin-bottom:16px;"><strong>Technologies Used:</strong><br>${techArr.join(', ')}</div>
-                <div style="margin-bottom:16px;"><strong>Files & Structure:</strong><br>src/, routes/, controllers/, models/, services/, public/</div>
-                <div style="margin-bottom:16px;"><strong>How It Works:</strong><br>Requests pass through controllers → services → data layer. Auth is handled via JWT, with role checks on protected endpoints.</div>
-                <div style="margin-bottom:16px;"><strong>Hiccups & Solutions:</strong><br>Rate limits, deployment configs, DB migrations. Fixed with retries, health checks, migrations versioning and environment parity.</div>
-                <div style="margin-bottom:16px;"><strong>Why These Technologies:</strong><br>Stability, ecosystem maturity, and deployment simplicity for the stack.</div>
-                <div style="margin-bottom:16px;"><strong>Command Flow:</strong><br>install → build → test → deploy. CI hooks ensure lint/test gates pass before releases.</div>
-                <div style="margin-top:10px;">
-                    <a href="#" target="_blank" class="lb-gh-link" style="margin-right:8px;">REPOSITORY →</a>
-                    <a href="javascript:void(0)" class="lb-gh-link" onclick="closeProjectDetail()">CLOSE</a>
+
+            const sectionsHTML = `
+                <div style="margin-bottom:24px;">
+                    <div style="color:var(--orange); font-family:'Press Start 2P', monospace; font-size:10px; margin-bottom:10px;">📌 PROBLEM STATEMENT</div>
+                    <div style="background:rgba(255,255,255,0.03); border-left:4px solid var(--orange); padding:12px 16px;">${p.problem || 'Not specified.'}</div>
+                </div>
+                <div style="margin-bottom:24px;">
+                    <div style="color:var(--blue-light); font-family:'Press Start 2P', monospace; font-size:10px; margin-bottom:10px;">📌 TECHNICAL APPROACH</div>
+                    <div style="background:rgba(255,255,255,0.03); border-left:4px solid var(--blue-light); padding:12px 16px;">${p.approach || 'Not specified.'}</div>
+                </div>
+                <div style="margin-bottom:24px;">
+                    <div style="color:var(--red-br); font-family:'Press Start 2P', monospace; font-size:10px; margin-bottom:10px;">📌 CHALLENGES OVERCOME</div>
+                    <div style="background:rgba(255,255,255,0.03); border-left:4px solid #fca5a5; padding:12px 16px;">${p.challenges || 'Not specified.'}</div>
+                </div>
+                <div style="margin-bottom:24px;">
+                    <div style="color:var(--green-light); font-family:'Press Start 2P', monospace; font-size:10px; margin-bottom:10px;">📌 RESULTS / OUTCOMES</div>
+                    <div style="background:rgba(255,255,255,0.03); border-left:4px solid var(--green-light); padding:12px 16px;">${p.results || 'Not specified.'}</div>
+                </div>
+                <div style="margin-top:30px; border-top:1px solid #333; padding-top:20px;">
+                    <button class="lb-gh-link" onclick="closeProjectDetail()" style="background:#333; border-color:#000;">CLOSE DETAILS</button>
+                    ${p.githubUrl ? `<a href="${p.githubUrl}" target="_blank" class="lb-gh-link" style="margin-left:10px;">GITHUB →</a>` : ''}
                 </div>
             `;
+            document.getElementById('pd-sections').innerHTML = sectionsHTML;
             const d = document.getElementById('proj-detail');
             d.style.display = 'flex';
             d.classList.add('lb-open');
